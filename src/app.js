@@ -444,8 +444,8 @@ const app = {
     // ==========================================
     downloadFormular() {
         const link = document.createElement('a');
-        link.href = 'documents/nikolaus-formular.txt';
-        link.download = 'Nikolaus-Formular-Kolping.txt';
+        link.href = 'documents/nikolaus-formular.docx';
+        link.download = 'Nikolaus-Formular-Kolpingsfamilie-Eichenau.docx';
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
