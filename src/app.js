@@ -3,7 +3,7 @@
 // ==========================================
 
 const SUPABASE_URL = 'https://ggxvvzhtwmklkpeflopv.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_o9B2hZMzPw_yMLlMp6KB2Q_xQTaU0HR';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdneHZ2emh0d21rbGtwZWZsb3B2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAyOTk4MTIsImV4cCI6MjA5NTg3NTgxMn0.j4PYHOnBK65jKBGIngpgwjXc4IAXl7mF78BkF4KneyY';
 
 // Supabase client (loaded via CDN in index.html)
 // Named 'db' to avoid conflict with window.supabase global
