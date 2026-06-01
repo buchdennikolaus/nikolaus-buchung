@@ -80,7 +80,7 @@ body {
 }
 
 .logo-small {
-    height: 36px;
+    height: 56px;
     width: auto;
     flex-shrink: 0;
 }
@@ -109,7 +109,7 @@ body {
 
 @media (max-width: 480px) {
     .logo-large { max-width: 100px; }
-    .logo-small { height: 28px; }
+    .logo-small { height: 44px; }
 }
 
 /* Impressum & Datenschutz */
