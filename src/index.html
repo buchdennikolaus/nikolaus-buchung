@@ -460,11 +460,33 @@
                 </div>
 
                 <div class="admin-tabs">
-                    <button id="tab-bookings" class="tab-btn active" onclick="app.showAdminView('bookings')">Buchungen</button>
+                    <button id="tab-overview" class="tab-btn active" onclick="app.showAdminView('overview')">Übersicht</button>
+                    <button id="tab-bookings" class="tab-btn" onclick="app.showAdminView('bookings')">Buchungen</button>
                     <button id="tab-waitlist" class="tab-btn" onclick="app.showAdminView('waitlist')">Warteliste (<span id="waitlist-count">0</span>)</button>
                 </div>
 
-                <div id="admin-view-bookings" class="admin-view active">
+                <!-- Übersicht: Slot-Auslastung pro Tag -->
+                <div id="admin-view-overview" class="admin-view active">
+                    <div class="overview-stats" id="overview-stats">
+                        <!-- Statistik-Kacheln werden per JS befüllt -->
+                    </div>
+                    <div class="overview-grid">
+                        <div class="overview-day">
+                            <h3>📅 5. Dezember 2026</h3>
+                            <div id="overview-slots-dec5" class="overview-slots">
+                                <!-- Slots per JS -->
+                            </div>
+                        </div>
+                        <div class="overview-day">
+                            <h3>📅 6. Dezember 2026</h3>
+                            <div id="overview-slots-dec6" class="overview-slots">
+                                <!-- Slots per JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="admin-view-bookings" class="admin-view">
                     <div class="table-container">
                         <table class="admin-table">
                             <thead>

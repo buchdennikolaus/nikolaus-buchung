@@ -501,6 +501,7 @@ const app = {
         ]);
         this.state.adminBookings = bookings;
         this.state.adminWaitlist = waitlist;
+        this.renderOverview();
         this.renderAdminTable();
         this.renderWaitlistTable();
     },
@@ -677,6 +678,90 @@ const app = {
         document.getElementById(`admin-view-${viewName}`).classList.add('active');
         document.querySelectorAll('.admin-tabs .tab-btn').forEach(b => b.classList.remove('active'));
         document.getElementById(`tab-${viewName}`).classList.add('active');
+        if (viewName === 'overview') this.renderOverview();
+    },
+
+    renderOverview() {
+        const bookings = this.state.adminBookings || [];
+        const slots = this.generateTimeSlots();
+
+        // Statistik
+        const dec5 = bookings.filter(b => b.booking_date === '2026-12-05');
+        const dec6 = bookings.filter(b => b.booking_date === '2026-12-06');
+        const totalChildren = bookings.reduce((s, b) => s + (b.num_children || 0), 0);
+        const totalSlots = slots.length * 2;
+        const bookedSlotCount = (b) => Math.ceil((b.duration || 20) / 20);
+        const usedDec5 = dec5.reduce((s, b) => s + bookedSlotCount(b), 0);
+        const usedDec6 = dec6.reduce((s, b) => s + bookedSlotCount(b), 0);
+        const freeDec5 = slots.length - usedDec5;
+        const freeDec6 = slots.length - usedDec6;
+
+        const statsEl = document.getElementById('overview-stats');
+        statsEl.innerHTML = `
+            <div class="stat-card">
+                <div class="stat-value">${bookings.length}</div>
+                <div class="stat-label">Buchungen gesamt</div>
+            </div>
+            <div class="stat-card stat-card-orange">
+                <div class="stat-value">${totalChildren}</div>
+                <div class="stat-label">Kinder gesamt</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">${dec5.length}</div>
+                <div class="stat-label">Buchungen 5. Dez</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">${dec6.length}</div>
+                <div class="stat-label">Buchungen 6. Dez</div>
+            </div>
+            <div class="stat-card stat-card-green">
+                <div class="stat-value">${freeDec5 + freeDec6}</div>
+                <div class="stat-label">Freie Slots gesamt</div>
+            </div>
+        `;
+
+        // Slots pro Tag rendern
+        this.renderOverviewDay('2026-12-05', dec5, document.getElementById('overview-slots-dec5'));
+        this.renderOverviewDay('2026-12-06', dec6, document.getElementById('overview-slots-dec6'));
+    },
+
+    renderOverviewDay(date, bookings, container) {
+        if (!container) return;
+        container.innerHTML = '';
+        const slots = this.generateTimeSlots();
+
+        slots.forEach(time => {
+            // Prüfen welche Buchung diesen Slot belegt
+            const booking = bookings.find(b => {
+                const bStart = new Date(`${date}T${b.booking_time}`);
+                const bEnd = new Date(bStart.getTime() + (b.duration || 20) * 60000);
+                const slotTime = new Date(`${date}T${time}`);
+                return slotTime >= bStart && slotTime < bEnd;
+            });
+
+            const card = document.createElement('div');
+            if (booking) {
+                // Ist dies der Start-Slot?
+                const isStart = booking.booking_time.substring(0, 5) === time;
+                const slotsCount = Math.ceil((booking.duration || 20) / 20);
+                card.className = 'overview-slot booked';
+                card.innerHTML = `
+                    <span class="slot-time-label">${time}</span>
+                    ${isStart ? `
+                        <span class="slot-booking-name">${booking.first_name} ${booking.last_name}</span>
+                        <span class="slot-booking-meta">${booking.num_children} Kind${booking.num_children !== 1 ? 'er' : ''} · ${booking.duration} min</span>
+                        ${booking.team ? `<span class="slot-booking-team">${booking.team}</span>` : ''}
+                    ` : `<span class="slot-booking-meta" style="opacity:0.5">↑ fortgesetzt</span>`}
+                `;
+            } else {
+                card.className = 'overview-slot free';
+                card.innerHTML = `
+                    <span class="slot-time-label">${time}</span>
+                    <span class="slot-free-label">Frei</span>
+                `;
+            }
+            container.appendChild(card);
+        });
     },
 
     async downloadExcel() {
