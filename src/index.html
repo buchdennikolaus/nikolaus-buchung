@@ -278,12 +278,40 @@
         </div>
     </div>
 
+    <!-- Screen: Admin Login -->
+    <div id="screen-admin-login" class="screen">
+        <div class="container">
+            <main class="content content-centered" style="max-width:400px;margin:0 auto;">
+                <div style="text-align:center;margin-bottom:2rem;">
+                    <div style="font-size:48px;margin-bottom:1rem;">🔐</div>
+                    <h1 style="font-size:1.5rem;">Admin-Bereich</h1>
+                    <p style="color:var(--medium-grey);font-size:0.9rem;">Kolpingsfamilie Eichenau</p>
+                </div>
+                <form id="admin-login-form" onsubmit="app.adminLogin(event)">
+                    <div class="form-group">
+                        <label for="admin-email">E-Mail</label>
+                        <input type="email" id="admin-email" required autocomplete="username">
+                    </div>
+                    <div class="form-group">
+                        <label for="admin-password">Passwort</label>
+                        <input type="password" id="admin-password" required autocomplete="current-password">
+                    </div>
+                    <div id="login-error" style="display:none;background:#fff0f0;border:1px solid #ffcccc;border-radius:4px;padding:12px;margin-bottom:1rem;color:#cc0000;font-size:0.875rem;"></div>
+                    <button type="submit" class="btn-primary" id="login-btn">Einloggen</button>
+                </form>
+            </main>
+        </div>
+    </div>
+
     <!-- Admin Dashboard (hidden route: index.html#admin) -->
     <div id="screen-admin" class="screen">
         <div class="container container-wide">
             <header class="header">
                 <h1>Admin Dashboard</h1>
-                <button class="btn-text" onclick="app.navigateTo('landing')">Zur Startseite</button>
+                <div style="display:flex;gap:1rem;align-items:center;">
+                    <button class="btn-text" onclick="app.navigateTo('landing')">Zur Startseite</button>
+                    <button class="btn-secondary" onclick="app.adminLogout()" style="font-size:0.875rem;padding:8px 16px;">Ausloggen</button>
+                </div>
             </header>
             
             <main class="content">

@@ -40,15 +40,15 @@ const app = {
             }
         }
 
-        // Admin-Zugang via URL-Hash
+        // Admin-Zugang via URL-Hash (mit Auth-Check)
         if (window.location.hash === '#admin') {
-            this.navigateTo('admin');
+            await this.checkAdminAuth();
         }
 
-        window.addEventListener('popstate', () => {
+        window.addEventListener('hashchange', async () => {
             if (window.location.hash === '#admin') {
-                this.navigateTo('admin');
-            } else {
+                await this.checkAdminAuth();
+            } else if (!window.location.hash) {
                 this.navigateTo('landing');
             }
         });
@@ -446,6 +446,48 @@ const app = {
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+    },
+
+    // ==========================================
+    // ADMIN AUTH
+    // ==========================================
+    async checkAdminAuth() {
+        const { data: { session } } = await db.auth.getSession();
+        if (session) {
+            this.navigateTo('admin');
+        } else {
+            this.navigateTo('admin-login');
+        }
+    },
+
+    async adminLogin(event) {
+        event.preventDefault();
+        const email = document.getElementById('admin-email').value.trim();
+        const password = document.getElementById('admin-password').value;
+        const loginBtn = document.getElementById('login-btn');
+        const errorDiv = document.getElementById('login-error');
+
+        loginBtn.disabled = true;
+        loginBtn.textContent = 'Wird eingeloggt...';
+        errorDiv.style.display = 'none';
+
+        const { error } = await db.auth.signInWithPassword({ email, password });
+
+        if (error) {
+            errorDiv.textContent = 'Falsches Passwort oder E-Mail. Bitte erneut versuchen.';
+            errorDiv.style.display = 'block';
+            loginBtn.disabled = false;
+            loginBtn.textContent = 'Einloggen';
+            return;
+        }
+
+        this.navigateTo('admin');
+    },
+
+    async adminLogout() {
+        await db.auth.signOut();
+        window.location.hash = '';
+        this.navigateTo('landing');
     },
 
     // ==========================================
