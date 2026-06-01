@@ -644,8 +644,90 @@ const app = {
         document.getElementById(`tab-${viewName}`).classList.add('active');
     },
 
-    downloadExcel() {
-        this.showModal('In einer finalen Version werden die Buchungsdaten als Excel-Datei heruntergeladen.');
+    async downloadExcel() {
+        // Immer alle Buchungen frisch laden
+        this.showLoading(true, 'Excel wird erstellt...');
+        const bookings = await this.loadAllBookingsForAdmin();
+        this.showLoading(false);
+
+        if (!bookings.length) {
+            this.showModal('Keine Buchungen vorhanden.');
+            return;
+        }
+
+        // Daten für Excel aufbereiten
+        const headers = [
+            'Nachname', 'Vorname', 'Adresse', 'PLZ', 'Ort',
+            'E-Mail', 'Telefon', 'Datum', 'Uhrzeit', 'Dauer (Min)',
+            'Anzahl Kinder', 'Team', 'Word erhalten', 'Interne Notiz'
+        ];
+
+        const rows = bookings.map(b => [
+            b.last_name || '',
+            b.first_name || '',
+            b.address || '',
+            b.zip || '',
+            b.city || '',
+            b.email || '',
+            b.phone || '',
+            b.booking_date ? new Date(b.booking_date + 'T00:00:00').toLocaleDateString('de-DE') : '',
+            b.booking_time ? b.booking_time.substring(0, 5) : '',
+            b.duration || '',
+            b.num_children || '',
+            b.team || '',
+            b.word_received ? 'Ja' : 'Nein',
+            b.internal_note || ''
+        ]);
+
+        // Worksheet erstellen
+        const wsData = [headers, ...rows];
+        const ws = XLSX.utils.aoa_to_sheet(wsData);
+
+        // Spaltenbreiten
+        ws['!cols'] = [
+            { wch: 16 }, { wch: 14 }, { wch: 22 }, { wch: 7 }, { wch: 12 },
+            { wch: 26 }, { wch: 16 }, { wch: 12 }, { wch: 9 }, { wch: 12 },
+            { wch: 14 }, { wch: 10 }, { wch: 14 }, { wch: 24 }
+        ];
+
+        // Header-Styling (orange Hintergrund, fett)
+        const orange = { fgColor: { rgb: 'F05A00' } };
+        const white = { rgb: 'FFFFFF' };
+        const borderStyle = { style: 'thin', color: { rgb: 'DDDDDD' } };
+        const allBorders = { top: borderStyle, bottom: borderStyle, left: borderStyle, right: borderStyle };
+
+        headers.forEach((_, colIdx) => {
+            const cellRef = XLSX.utils.encode_cell({ r: 0, c: colIdx });
+            if (!ws[cellRef]) ws[cellRef] = { v: headers[colIdx], t: 's' };
+            ws[cellRef].s = {
+                fill: orange,
+                font: { bold: true, color: white, sz: 11 },
+                border: allBorders,
+                alignment: { horizontal: 'center', vertical: 'center', wrapText: false }
+            };
+        });
+
+        // Datenzeilen-Styling (abwechselnde Zeilen)
+        rows.forEach((row, rowIdx) => {
+            const isEven = rowIdx % 2 === 0;
+            const fillColor = isEven ? { fgColor: { rgb: 'F9F9F9' } } : { fgColor: { rgb: 'FFFFFF' } };
+            row.forEach((_, colIdx) => {
+                const cellRef = XLSX.utils.encode_cell({ r: rowIdx + 1, c: colIdx });
+                if (!ws[cellRef]) ws[cellRef] = { v: row[colIdx], t: 's' };
+                ws[cellRef].s = {
+                    fill: fillColor,
+                    border: allBorders,
+                    alignment: { vertical: 'center', wrapText: false }
+                };
+            });
+        });
+
+        // Workbook erstellen und download
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Buchungen');
+
+        const today = new Date().toLocaleDateString('de-DE').replace(/\./g, '-');
+        XLSX.writeFile(wb, `Nikolaus-Buchungen-${today}.xlsx`);
     },
 
     // ==========================================
