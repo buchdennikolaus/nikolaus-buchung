@@ -1,106 +1,241 @@
-# Project K - Tasks Log
+# Project K – Tasks & Änderungsprotokoll
 
-## Project Information
-- **Project Name**: Project K
-- **Status**: Active
-- **Started**: 2026-04-24
-
-## Task History
-
-### 2026-04-24 - Project Initialization
-
-**Task**: Set up Project K structure
-**Status**: ✅ Complete
-**Time**: 07:42 AM
-
-**Actions Taken**:
-1. Created project directory structure
-2. Initialized README.md with project overview
-3. Created TASKS_LOG.md for task tracking
-4. Set up subdirectories (docs, src, research, deliverables)
-5. Updated PROJECTS_INDEX.md
-
-**Notes**:
-- Project structure follows established AI_Projects standards
-- All supporting directories created and ready
-- Task received and completed successfully
+## Projektinformationen
+- **Projektname**: Nikolaus Buchungssystem – Kolpingsfamilie Eichenau
+- **Status**: ✅ Produktiv
+- **Gestartet**: 2026-04-24
+- **Produktiv seit**: 2026-05-xx
+- **Live-URL**: www.buchdennikolaus.de
 
 ---
 
-### 2026-04-24 - Prototype Development
+## Aufgaben-Chronologie
 
-**Task**: Build clickable Nikolaus booking system prototype
-**Status**: ✅ Complete
-**Time**: 07:42 AM - 07:50 AM
+### 2026-04-24 – Projektinitialisierung
 
-**Actions Taken**:
-1. Created comprehensive HTML structure with all 6 screens (landing, form, slots, confirm, success, admin)
-2. Implemented Kolping design system CSS with orange (#f05a00) primary color
-3. Developed JavaScript application with state management and navigation
-4. Created realistic slot availability simulation (17:00-20:00, 20-min intervals)
-5. Implemented dynamic duration calculation (20/40/60 min based on children count)
-6. Built admin dashboard with filtering, search, and data management
-7. Generated mock bookings for demonstration
-8. Created comprehensive README documentation
-9. Tested prototype in browser
+**Aufgabe**: Projektstruktur aufsetzen  
+**Status**: ✅ Abgeschlossen
 
-**Key Features Implemented**:
-- Complete user booking flow (5 screens)
-- Admin dashboard with mock data
-- Responsive mobile-first design
-- Realistic slot availability patterns
-- Form validation
-- State management (in-memory)
-- Professional Kolping branding
-
-**Notes**:
-- Prototype is fully functional and ready for stakeholder presentation
-- No backend/database required - pure front-end demonstration
-- All interactions are clickable and simulate real behavior
-- Design strictly follows Kolping guidelines (orange, black, white - no Christmas kitsch)
-- Admin access via #admin URL hash
+**Durchgeführte Aktionen**:
+1. Projektverzeichnis erstellt
+2. README.md mit Projektübersicht initialisiert
+3. TASKS_LOG.md für Aufgabenverfolgung angelegt
+4. Unterverzeichnisse erstellt (docs, src, research, deliverables)
 
 ---
 
-## Completed Tasks
+### 2026-04-24 – Prototyp-Entwicklung (Phase 1)
 
-- [x] Set up project structure
-- [x] Define project requirements and objectives
-- [x] Create HTML structure for all screens
-- [x] Implement CSS with Kolping design guidelines
-- [x] Develop JavaScript application logic
-- [x] Create slot availability simulation
-- [x] Build admin dashboard
-- [x] Generate mock data
-- [x] Test complete prototype
-- [x] Create documentation
+**Aufgabe**: Klickbaren Front-End-Prototyp bauen  
+**Status**: ✅ Abgeschlossen
 
----
+**Durchgeführte Aktionen**:
+1. HTML-Struktur mit 6 Screens (Landing, Formular, Slots, Bestätigung, Erfolg, Admin)
+2. Kolping Design-System CSS (Orange #f05a00, Clean/Minimal)
+3. JavaScript-Applikation mit State-Management und Navigation
+4. Slot-Verfügbarkeitssimulation (17:00–20:00 Uhr, 20-Min-Intervalle)
+5. Dynamische Dauerberechnung (20/40/60 Min basierend auf Kinderzahl)
+6. Admin-Dashboard mit Filter, Suche, Datenverwaltung
+7. Mock-Daten für Demonstration
+8. Browser-Test des vollständigen Flows
 
-## Task Template
-
-```markdown
-### YYYY-MM-DD - Task Title
-
-**Task**: Brief description
-**Status**: 🔄 In Progress / ✅ Complete / ⏸️ On Hold / ❌ Cancelled
-**Time**: HH:MM AM/PM
-
-**Actions Taken**:
-1. Action item 1
-2. Action item 2
-
-**Challenges**:
-- Any issues encountered
-
-**Solutions**:
-- How challenges were resolved
-
-**Notes**:
-- Additional observations
-- Lessons learned
-```
+**Ergebnis**: Funktionaler Klick-Dummy ohne Backend, bereit für Stakeholder-Präsentation
 
 ---
 
-*Last Updated*: 2026-04-24 07:42 AM
+### 2026-04-30 – Stakeholder-Feedback & Konzept V2
+
+**Aufgabe**: Feedback verarbeiten, Konzept für Produktionsversion erstellen  
+**Status**: ✅ Abgeschlossen
+
+**Feedback-Punkte**:
+- Echte Datenbank + E-Mail-Versand gewünscht
+- Admin-Dashboard soll echte Daten zeigen
+- Login für Admin-Bereich
+- Word-Dokument Download nach Buchung
+- Warteliste wenn ausgebucht
+
+**Ergebnis**: `docs/KONZEPT_V2.md` erstellt mit vollständiger technischer Spezifikation
+
+---
+
+### 2026-05-xx – Backend-Integration (Phase 2)
+
+**Aufgabe**: Supabase als Backend anbinden  
+**Status**: ✅ Abgeschlossen
+
+**Durchgeführte Aktionen**:
+1. Supabase-Projekt erstellt
+2. PostgreSQL-Schema definiert (`bookings` + `waitlist` Tabellen)
+3. Row Level Security (RLS) konfiguriert
+4. Supabase JS-Client in `app.js` integriert
+5. Buchungsformular schreibt in Supabase-Datenbank
+6. Slot-Verfügbarkeit wird aus Datenbank berechnet (keine Mock-Daten mehr)
+7. Doppelbuchungs-Sperre über E-Mail-Adresse implementiert
+8. Wartelisten-Funktion implementiert
+
+**Technische Details**:
+- Supabase URL + Anon Key direkt im Frontend (öffentliche API, RLS gesichert)
+- `bookings`-Tabelle mit 17 Spalten inkl. Admin-Felder
+- `waitlist`-Tabelle mit 8 Spalten
+
+---
+
+### 2026-05-xx – E-Mail-Versand (Phase 3)
+
+**Aufgabe**: Automatische Bestätigungs-E-Mails implementieren  
+**Status**: ✅ Abgeschlossen
+
+**Durchgeführte Aktionen**:
+1. Supabase Edge Function `send-booking-email` erstellt (Deno/TypeScript)
+2. Gmail SMTP via Nodemailer konfiguriert
+3. E-Mail-Template mit Termindetails, Formular-Hinweis, Kontaktdaten
+4. Edge Function auf Supabase deployed
+5. Frontend ruft Edge Function nach erfolgreicher Buchung auf
+
+**Technische Details**:
+- SMTP: smtp.gmail.com, Port 587 (TLS)
+- Auth: Gmail App-Passwort (gespeichert als Supabase Secret)
+- Limit: 500 E-Mails/Tag (ausreichend für Projekt)
+
+---
+
+### 2026-05-xx – Deployment auf Vercel + Custom Domain
+
+**Aufgabe**: Website auf buchdennikolaus.de deployen  
+**Status**: ✅ Abgeschlossen
+
+**Durchgeführte Aktionen**:
+1. GitHub Repository `buchdennikolaus/nikolaus-buchung` erstellt
+2. Vercel-Projekt verbunden (Auto-Deploy via GitHub)
+3. Custom Domain `buchdennikolaus.de` auf Vercel konfiguriert
+4. DNS-Einträge gesetzt
+5. SSL/HTTPS automatisch durch Vercel
+
+---
+
+### 2026-05-xx – Admin-Login mit Supabase Auth
+
+**Aufgabe**: Admin-Dashboard mit echtem Login sichern  
+**Status**: ✅ Abgeschlossen
+
+**Durchgeführte Aktionen**:
+1. Supabase Auth aktiviert
+2. Admin-User `buchdennikolaus@gmail.com` in Supabase angelegt
+3. Login-Screen (`#admin-login`) implementiert
+4. Session-Management mit Supabase Auth (automatisches Logout nach 1h Inaktivität)
+5. Admin-Dashboard nur nach erfolgreichem Login zugänglich
+6. Logout-Button im Dashboard
+
+**Sicherheit**:
+- Kein direkter Zugriff auf Admin-Daten ohne Login
+- Supabase RLS schützt Daten auf Datenbankebene
+
+---
+
+### 2026-05-xx – Word-Dokument Download (DOCX)
+
+**Aufgabe**: Nikolaus-Formular als DOCX-Download nach Buchung  
+**Status**: ✅ Abgeschlossen
+
+**Durchgeführte Aktionen**:
+1. Formular-Inhalt in `src/documents/nikolaus-formular.txt` definiert
+2. DOCX-Generierung mit `docx`-Library via CDN implementiert
+3. Download-Button auf Erfolgsseite
+4. Dateiname: `Nikolaus-Formular-2026.docx`
+
+---
+
+### 2026-05-xx – Admin-Dashboard Erweiterungen
+
+**Aufgabe**: Admin-Dashboard mit Echtzeit-Daten und Verwaltungsfunktionen  
+**Status**: ✅ Abgeschlossen
+
+**Durchgeführte Aktionen**:
+1. Tabelle lädt Buchungen in Echtzeit aus Supabase
+2. Team-Zuweisung (Team 1/2/3) per Dropdown, direkt in DB gespeichert
+3. Word-Eingang-Checkbox (word_received) direkt in DB
+4. Notiz-Feld pro Buchung mit Speichern-Button
+5. Datum-Filter (5.12 / 6.12 / alle)
+6. Volltextsuche (Name, Adresse)
+7. Wartelisten-Reiter mit eigenem Tab
+
+---
+
+### 2026-06-01 – Excel-Export mit SheetJS
+
+**Aufgabe**: Buchungsdaten als formatierte Excel-Datei exportieren  
+**Status**: ✅ Abgeschlossen
+
+**Durchgeführte Aktionen**:
+1. SheetJS CDN (`xlsx-0.20.3`) in `index.html` eingebunden
+2. `downloadExcel()` Funktion in `app.js` implementiert
+3. Lädt alle Buchungen aus Supabase (unabhängig vom aktiven Filter)
+4. Excel-Formatierung:
+   - Header-Zeile: Orange Hintergrund (#f05a00), weiße Schrift, fett
+   - Abwechselnde Zeilenfarben (hellgrau / weiß)
+   - Optimierte Spaltenbreiten
+5. 14 Spalten: Nachname, Vorname, Adresse, PLZ, Ort, E-Mail, Telefon, Datum, Uhrzeit, Dauer, Kinder, Team, Word erhalten, Notiz
+6. Dateiname: `Nikolaus-Buchungen-[Datum].xlsx`
+
+---
+
+### 2026-06-01 – Kolping-Logo auf allen Seiten
+
+**Aufgabe**: Kolping-Logo auf der Website einbinden  
+**Status**: ✅ Abgeschlossen
+
+**Durchgeführte Aktionen**:
+1. `Kolping Eichenau.jpg` nach `src/images/kolping-eichenau.jpg` kopiert
+2. Logo auf Startseite: Groß, zentriert, oberhalb der Überschrift (max. 140px)
+3. Logo auf Unterseiten (Formular, Terminauswahl, Bestätigung): Klein (36px) rechts im Header
+4. Responsive: Mobil 100px (groß) / 28px (klein)
+5. CSS-Klassen: `.logo-large`, `.logo-small`, `.header-landing`, `.header-sub`
+
+---
+
+### 2026-06-01 – Dokumentation aktualisiert
+
+**Aufgabe**: Vollständige Projektdokumentation  
+**Status**: ✅ Abgeschlossen
+
+**Aktualisierte Dateien**:
+- `README.md` – Vollständige Neufassung mit aktuellem Stand, Technologie-Stack, Features, Datenbankschema, Deployment-Anleitung
+- `TASKS_LOG.md` – Dieses Dokument
+- `docs/KONZEPT_V2.md` – Technisches Konzept mit Umsetzungsstatus
+
+---
+
+## Abgeschlossene Features (Gesamtübersicht)
+
+- [x] Front-End-Prototyp (HTML/CSS/JS)
+- [x] Supabase Datenbank (PostgreSQL)
+- [x] Buchungsformular mit Validierung
+- [x] Slot-Verfügbarkeit (dauerbasiert, aus DB)
+- [x] Doppelbuchungs-Sperre
+- [x] Wartelisten-Funktion
+- [x] E-Mail-Bestätigung (Gmail SMTP via Edge Function)
+- [x] DOCX-Formular Download
+- [x] Admin-Login (Supabase Auth)
+- [x] Admin-Dashboard (Echtzeit, Filter, Suche)
+- [x] Team-Zuweisung im Admin
+- [x] Word-Eingang-Tracking im Admin
+- [x] Interne Notizen im Admin
+- [x] Wartelisten-Ansicht im Admin
+- [x] Excel-Export (formatiert, alle Buchungen)
+- [x] Kolping-Logo auf allen Seiten
+- [x] Custom Domain (buchdennikolaus.de)
+- [x] Auto-Deployment via GitHub → Vercel
+- [x] SSL/HTTPS
+
+---
+
+## Offene Punkte / Mögliche Erweiterungen
+
+- [ ] Push-Benachrichtigung bei neuer Buchung (optional)
+- [ ] Buchungsschluss-Datum konfigurierbar im Admin (aktuell hardcoded: 30.11.2026)
+- [ ] E-Mail-Benachrichtigung wenn Wartelistenplatz frei wird (manuell derzeit)
+
+---
+
+*Zuletzt aktualisiert: 2026-06-01*
