@@ -194,6 +194,35 @@
 
 ---
 
+### 2026-06-01 – Impressum & Datenschutzerklärung
+
+**Aufgabe**: Rechtliche Pflichtseiten zur Website hinzufügen  
+**Status**: ✅ Abgeschlossen
+
+**Durchgeführte Aktionen**:
+1. Impressum-Screen (`screen-impressum`) in `index.html` eingefügt
+2. Datenschutzerklärung-Screen (`screen-datenschutz`) in `index.html` eingefügt
+3. Footer auf Startseite: Links „Impressum · Datenschutz" ergänzt
+4. CSS-Klassen `.impressum-content` (inkl. h2, p, ul, li, a) in `styles.css` hinzugefügt
+5. Datenschutzerklärung mit buchungsspezifischen Inhalten ergänzt:
+   - Buchungsdaten (Name, Adresse, Kinder, Termin) als verarbeitete Datenarten
+   - Zweck: Planung/Organisation Nikolaus-/Krampusbesuch, Team-Zuweisung, E-Mail-Bestätigung
+6. Beide Seiten nutzen vorhandene Navigation (`navigateTo`) und Kolping-Logo
+
+**Inhalt Impressum**:
+- Angaben gemäß § 5 TMG: Bastian Katz, Eichenau
+- Verantwortlicher: Bastian Katz | Ersteller: Thorsten Esch
+- Haftungsausschluss, Urheberrecht, EU-Streitschlichtung
+
+**Inhalt Datenschutzerklärung**:
+- Verantwortlicher gemäß DSGVO
+- Buchungsspezifische Datenarten
+- Zweck: Nikolaus-Besuch-Organisation
+- PayPal-Hinweis, Rechtsgrundlagen (Art. 6 DSGVO)
+- Betroffenenrechte (Art. 15–21 DSGVO)
+
+---
+
 ### 2026-06-01 – Dokumentation aktualisiert
 
 **Aufgabe**: Vollständige Projektdokumentation  
