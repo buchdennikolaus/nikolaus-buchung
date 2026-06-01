@@ -1,8 +1,1 @@
-{
-  "routes": [
-    { "src": "/styles.css", "dest": "/src/styles.css" },
-    { "src": "/app.js", "dest": "/src/app.js" },
-    { "src": "/documents/(.*)", "dest": "/src/documents/$1" },
-    { "src": "/(.*)", "dest": "/src/index.html" }
-  ]
-}
+{}
