@@ -70,6 +70,47 @@ body {
     max-width: 1200px;
 }
 
+/* Logo */
+.logo-large {
+    display: block;
+    max-width: 140px;
+    height: auto;
+    margin: 0 auto 1rem auto;
+}
+
+.logo-small {
+    height: 36px;
+    width: auto;
+    flex-shrink: 0;
+}
+
+.header-landing {
+    text-align: center;
+    flex-direction: column;
+    align-items: center;
+    display: flex;
+}
+
+.header-sub {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.header-sub .logo-small {
+    margin-left: auto;
+}
+
+.header-sub h1 {
+    width: 100%;
+    margin-top: var(--spacing-xs);
+}
+
+@media (max-width: 480px) {
+    .logo-large { max-width: 100px; }
+    .logo-small { height: 28px; }
+}
+
 /* Header */
 .header {
     margin-bottom: var(--spacing-lg);
