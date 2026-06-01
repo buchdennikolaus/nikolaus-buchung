@@ -804,6 +804,23 @@ body {
     font-size: 14px;
 }
 
+/* Resize Handle für Admin-Tabelle */
+.resize-handle {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    width: 5px;
+    cursor: col-resize;
+    user-select: none;
+    background: transparent;
+}
+
+.resize-handle:hover {
+    background: var(--primary-orange);
+    opacity: 0.5;
+}
+
 /* Admin Table */
 .table-container {
     overflow-x: auto;
@@ -823,6 +840,7 @@ body {
 }
 
 .admin-table th {
+    position: relative;
     padding: var(--spacing-sm);
     text-align: left;
     font-weight: 600;

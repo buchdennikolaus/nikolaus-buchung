@@ -535,6 +535,9 @@ const app = {
             return;
         }
 
+        // Nach dem Rendern: resize handles hinzufügen
+        setTimeout(() => this.makeColumnsResizable(), 0);
+
         bookings.forEach(b => {
             const row = document.createElement('tr');
             row.dataset.id = b.id;
@@ -571,6 +574,38 @@ const app = {
                 </td>
             `;
             tbody.appendChild(row);
+        });
+    },
+
+    makeColumnsResizable() {
+        const table = document.querySelector('#admin-view-bookings .admin-table');
+        if (!table) return;
+        const ths = table.querySelectorAll('th');
+        ths.forEach(th => {
+            // Vorhandenen Handle entfernen
+            const existing = th.querySelector('.resize-handle');
+            if (existing) existing.remove();
+            // Handle erstellen
+            const handle = document.createElement('div');
+            handle.className = 'resize-handle';
+            th.appendChild(handle);
+            // Drag-Logik
+            handle.addEventListener('mousedown', (e) => {
+                e.preventDefault();
+                const startX = e.pageX;
+                const startWidth = th.offsetWidth;
+                const onMouseMove = (e) => {
+                    const newWidth = Math.max(40, startWidth + (e.pageX - startX));
+                    th.style.width = newWidth + 'px';
+                    th.style.minWidth = newWidth + 'px';
+                };
+                const onMouseUp = () => {
+                    document.removeEventListener('mousemove', onMouseMove);
+                    document.removeEventListener('mouseup', onMouseUp);
+                };
+                document.addEventListener('mousemove', onMouseMove);
+                document.addEventListener('mouseup', onMouseUp);
+            });
         });
     },
 
