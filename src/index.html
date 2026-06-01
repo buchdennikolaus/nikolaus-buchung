@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nikolaus-Besuch buchen - Kolping</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Screen 1: Landing Page -->
+    <div id="screen-landing" class="screen active">
+        <div class="container">
+            <header class="header">
+                <h1>Nikolaus-Besuch buchen</h1>
+            </header>
+            
+            <main class="content">
+                <div class="info-box">
+                    <p class="intro-text">
+                        Die Kolpingsfamilie organisiert auch dieses Jahr wieder den traditionellen 
+                        Nikolaus-Besuch. Buchen Sie jetzt einen Termin für Ihre Familie und erleben 
+                        Sie einen unvergesslichen Abend mit dem Nikolaus.
+                    </p>
+                </div>
+
+                <div class="event-dates">
+                    <h2>Verfügbare Termine</h2>
+                    <div class="date-card">
+                        <div class="date-icon">5.</div>
+                        <div class="date-info">
+                            <strong>Dezember 5, 2026</strong>
+                            <span>17:00 - 20:00 Uhr</span>
+                        </div>
+                    </div>
+                    <div class="date-card">
+                        <div class="date-icon">6.</div>
+                        <div class="date-info">
+                            <strong>Dezember 6, 2026</strong>
+                            <span>17:00 - 20:00 Uhr</span>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn-primary" onclick="app.navigateTo('form')">
+                    Termin buchen
+                </button>
+
+                <div class="info-box info-box-light" style="margin-top: 2rem;">
+                    <p><strong>Wichtig:</strong> Buchungen sind nur bis zum <strong>30.11.2026</strong> möglich. Das ausgefüllte Word-Dokument mit Informationen zu Ihren Kindern benötigen wir bis spätestens <strong>01.12.2026</strong> per E-Mail.</p>
+                </div>
+            </main>
+            <footer class="footer">
+                <p>Bei Fragen können Sie uns gerne unter <a href="mailto:buchdennikolaus@gmail.com">buchdennikolaus@gmail.com</a> kontaktieren.</p>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Screen 2: Family Data Form -->
+    <div id="screen-form" class="screen">
+        <div class="container">
+            <header class="header">
+                <button class="btn-back" onclick="app.navigateTo('landing')">← Zurück</button>
+                <h1>Ihre Daten</h1>
+            </header>
+            
+            <main class="content">
+                <form id="booking-form" onsubmit="app.submitForm(event)">
+                    <div class="form-section">
+                        <h2>Kontaktdaten</h2>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="firstName">Vorname *</label>
+                                <input type="text" id="firstName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="lastName">Nachname *</label>
+                                <input type="text" id="lastName" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="address">Adresse *</label>
+                            <input type="text" id="address" required>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group form-group-small">
+                                <label for="zip">PLZ *</label>
+                                <input type="text" id="zip" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="city">Ort *</label>
+                                <input type="text" id="city" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="phone">Telefon *</label>
+                                <input type="tel" id="phone" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">E-Mail *</label>
+                                <input type="email" id="email" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h2>Besuchsdetails</h2>
+                        
+                        <div class="form-group">
+                            <label for="numChildren">Anzahl Kinder (max. 9) *</label>
+                            <input type="number" id="numChildren" min="1" max="9" required 
+                                   onchange="app.calculateDuration()">
+                            <small class="form-hint">Für Gruppen ab 10 Kindern (z.B. in Kindergärten) kontaktieren Sie uns bitte direkt per E-Mail an: <a href="mailto:buchdennikolaus@gmail.com">buchdennikolaus@gmail.com</a>.</small>
+                        </div>
+
+                        <div id="duration-display" class="duration-info" style="display: none;">
+                            <span class="duration-label">Besuchsdauer:</span>
+                            <span id="duration-value" class="duration-value">20 Minuten</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="notes">Besondere Hinweise für den Nikolaus (optional)</label>
+                            <textarea id="notes" rows="4" 
+                                      placeholder="z.B. besondere Wünsche, Allergien, etc."></textarea>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-primary">
+                        Weiter zur Terminauswahl
+                    </button>
+                </form>
+            </main>
+        </div>
+    </div>
+
+    <!-- Screen 3: Time Slot Selection -->
+    <div id="screen-slots" class="screen">
+        <div class="container">
+            <header class="header">
+                <button class="btn-back" onclick="app.navigateTo('form')">← Zurück</button>
+                <h1>Termin auswählen</h1>
+            </header>
+            
+            <main class="content">
+                <div class="booking-summary">
+                    <h3>Ihre Buchung</h3>
+                    <p><strong id="summary-name"></strong></p>
+                    <p><span id="summary-children"></span> Kinder · <span id="summary-duration"></span> Minuten</p>
+                </div>
+
+                <div class="date-tabs">
+                    <button class="tab-btn active" onclick="app.switchDate(0)">
+                        5. Dezember
+                    </button>
+                    <button class="tab-btn" onclick="app.switchDate(1)">
+                        6. Dezember
+                    </button>
+                </div>
+
+                <div id="slots-container" class="slots-container">
+                    <!-- Slots werden per JavaScript geladen -->
+                </div>
+                
+                <div id="waitlist-container" class="waitlist-container" style="display: none;">
+                    <div class="info-box">
+                        <p>Für die gewünschte Anzahl an Kindern sind leider <strong>an beiden Tagen</strong> keine Termine mehr verfügbar.</p>
+                        <button class="btn-primary" onclick="app.addToWaitlist()">
+                            Auf die Warteliste setzen
+                        </button>
+                    </div>
+                </div>
+
+                <div class="slot-legend">
+                    <div class="legend-item">
+                        <span class="legend-dot available"></span>
+                        <span>Verfügbar</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-dot full"></span>
+                        <span>Ausgebucht</span>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Screen 4: Confirmation -->
+    <div id="screen-confirm" class="screen">
+        <div class="container">
+            <header class="header">
+                <button class="btn-back" onclick="app.navigateTo('slots')">← Zurück</button>
+                <h1>Buchung bestätigen</h1>
+            </header>
+            
+            <main class="content">
+                <div class="confirmation-box">
+                    <h2>Zusammenfassung</h2>
+                    
+                    <div class="confirm-section">
+                        <h3>Kontaktdaten</h3>
+                        <p id="confirm-name"></p>
+                        <p id="confirm-address"></p>
+                        <p id="confirm-contact"></p>
+                    </div>
+
+                    <div class="confirm-section">
+                        <h3>Termindetails</h3>
+                        <div class="appointment-card">
+                            <div class="appointment-date">
+                                <span class="date-large" id="confirm-date-day"></span>
+                                <span id="confirm-date-month"></span>
+                            </div>
+                            <div class="appointment-info">
+                                <p class="appointment-time" id="confirm-time"></p>
+                                <p class="appointment-duration" id="confirm-duration"></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="confirm-section" id="confirm-notes-section" style="display: none;">
+                        <h3>Ihre Hinweise</h3>
+                        <p id="confirm-notes"></p>
+                    </div>
+                </div>
+
+                <button class="btn-primary" onclick="app.confirmBooking()">
+                    Buchung verbindlich bestätigen
+                </button>
+            </main>
+        </div>
+    </div>
+
+    <!-- Screen 5: Success -->
+    <div id="screen-success" class="screen">
+        <div class="container">
+            <main class="content content-centered">
+                <div class="success-icon">✓</div>
+                <h1>Buchung bestätigt!</h1>
+                
+                <div class="success-box">
+                    <p id="success-message-text" class="success-message">
+                        Vielen Dank für Ihre Buchung. Sie erhalten in Kürze eine Bestätigungs-E-Mail 
+                        mit allen wichtigen Informationen.
+                    </p>
+
+                    <div id="success-details-booking" class="success-details">
+                        <h3>Ihr Termin</h3>
+                        <p class="success-appointment">
+                            <strong id="success-date"></strong><br>
+                            <span id="success-time"></span>
+                        </p>
+                    </div>
+
+                    <!-- Download-Button für das Nikolaus-Formular -->
+                    <div id="success-download-section" class="info-box" style="text-align: center;">
+                        <h4>📄 Nikolaus-Formular herunterladen</h4>
+                        <p style="margin-bottom: 1rem;">
+                            Bitte laden Sie das Formular herunter, füllen Sie es aus und senden Sie es bis spätestens 
+                            <strong>01.12.2026</strong> an 
+                            <a href="mailto:buchdennikolaus@gmail.com">buchdennikolaus@gmail.com</a>.
+                        </p>
+                        <button class="btn-secondary" onclick="app.downloadFormular()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="vertical-align: text-bottom; margin-right: 8px;"><path d="M5 20h14v-2H5v2zm7-18-7 7h4v6h6v-6h4l-7-7z"/></svg>
+                            Nikolaus-Formular herunterladen
+                        </button>
+                    </div>
+
+                    <div id="success-next-steps" class="info-box info-box-light">
+                        <h4>Nächste Schritte</h4>
+                        <p>
+                            Bitte senden Sie uns das ausgefüllte Formular mit Informationen zu Ihren Kindern bis spätestens <strong>01.12.2026</strong> per E-Mail an: <a href="mailto:buchdennikolaus@gmail.com">buchdennikolaus@gmail.com</a>.
+                        </p>
+                    </div>
+                </div>
+
+                <button class="btn-text" onclick="app.navigateTo('landing')">
+                    Zur Startseite
+                </button>
+            </main>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard (hidden route: index.html#admin) -->
+    <div id="screen-admin" class="screen">
+        <div class="container container-wide">
+            <header class="header">
+                <h1>Admin Dashboard</h1>
+                <button class="btn-text" onclick="app.navigateTo('landing')">Zur Startseite</button>
+            </header>
+            
+            <main class="content">
+                <div class="admin-controls">
+                    <div class="control-group">
+                        <label for="filter-date">Datum filtern:</label>
+                        <select id="filter-date" onchange="app.filterBookings()">
+                            <option value="all">Alle Termine</option>
+                            <option value="2026-12-05">5. Dezember</option>
+                            <option value="2026-12-06">6. Dezember</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label for="search-field">Suchen:</label>
+                        <input type="text" id="search-field" placeholder="Name oder Adresse..." 
+                               oninput="app.searchBookings()">
+                    </div>
+                    <div class="control-group control-group-button">
+                        <label>&nbsp;</label>
+                        <button class="btn-secondary" onclick="app.downloadExcel()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M5 20h14v-2H5v2zm7-18-7 7h4v6h6v-6h4l-7-7z"></path></svg>
+                            Download (Excel)
+                        </button>
+                    </div>
+                </div>
+
+                <div class="admin-tabs">
+                    <button id="tab-bookings" class="tab-btn active" onclick="app.showAdminView('bookings')">Buchungen</button>
+                    <button id="tab-waitlist" class="tab-btn" onclick="app.showAdminView('waitlist')">Warteliste (<span id="waitlist-count">0</span>)</button>
+                </div>
+
+                <div id="admin-view-bookings" class="admin-view active">
+                    <div class="table-container">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Adresse</th>
+                                    <th>E-Mail</th>
+                                    <th>Telefon</th>
+                                    <th>Datum</th>
+                                    <th>Zeit</th>
+                                    <th>Dauer</th>
+                                    <th>Kinder</th>
+                                    <th>Team</th>
+                                    <th>Word</th>
+                                    <th>Notizen</th>
+                                    <th>Aktion</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-table-body">
+                                <tr><td colspan="12" style="padding:16px;text-align:center;color:var(--medium-grey)">Lade Daten...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="admin-view-waitlist" class="admin-view">
+                    <div class="table-container">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>E-Mail</th>
+                                    <th>Telefon</th>
+                                    <th>Kinder</th>
+                                    <th>Gew. Datum</th>
+                                    <th>Zeitstempel</th>
+                                </tr>
+                            </thead>
+                            <tbody id="waitlist-table-body">
+                                <!-- Warteliste wird per JavaScript geladen -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Supabase CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="app.js"></script>
+
+    <!-- Custom Modal -->
+    <div id="custom-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <p id="modal-text"></p>
+            <button class="btn-primary" onclick="app.closeModal()">OK</button>
+        </div>
+    </div>
+</body>
+</html>

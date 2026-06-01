@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+.npm
+
+# Environment variables (NEVER committen!)
+.env
+.env.local
+.env.*.local
+
+# Supabase secrets
+supabase/.env
+supabase/functions/.env
+
+# OS-Dateien
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/settings.json
+*.swp
+
+# Build-Outputs
+dist/
+build/
+
+# Logs
+*.log
+npm-debug.log*
