@@ -412,7 +412,6 @@ const app = {
     populateSuccess() {
         const messageText = document.getElementById('success-message-text');
         const bookingDetails = document.getElementById('success-details-booking');
-        const nextSteps = document.getElementById('success-next-steps');
         const downloadSection = document.getElementById('success-download-section');
         const heading = document.querySelector('#screen-success h1');
 
@@ -421,7 +420,6 @@ const app = {
             heading.textContent = 'Buchung bestätigt!';
             messageText.innerHTML = 'Vielen Dank für Ihre Buchung. Sie erhalten in Kürze eine Bestätigungs-E-Mail.';
             bookingDetails.style.display = 'block';
-            nextSteps.style.display = 'block';
             if (downloadSection) downloadSection.style.display = 'block';
 
             const data = this.state.bookingData;
@@ -434,7 +432,6 @@ const app = {
             heading.textContent = 'Erfolgreich auf Warteliste gesetzt';
             messageText.innerHTML = 'Wir haben Ihre Anfrage erhalten und melden uns, falls ein Termin frei wird.';
             bookingDetails.style.display = 'none';
-            nextSteps.style.display = 'none';
             if (downloadSection) downloadSection.style.display = 'none';
         }
     },
