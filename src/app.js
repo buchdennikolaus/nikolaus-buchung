@@ -6,7 +6,8 @@ const SUPABASE_URL = 'https://ggxvvzhtwmklkpeflopv.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_o9B2hZMzPw_yMLlMp6KB2Q_xQTaU0HR';
 
 // Supabase client (loaded via CDN in index.html)
-let supabase;
+// Named 'db' to avoid conflict with window.supabase global
+let db;
 
 const app = {
     state: {
@@ -26,7 +27,7 @@ const app = {
     // ==========================================
     async init() {
         // Supabase initialisieren
-        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         // Buchungsschluss prüfen
         const bookingDeadline = new Date('2026-12-01T00:00:00');
@@ -80,7 +81,7 @@ const app = {
     // SUPABASE: Buchungen laden
     // ==========================================
     async loadBookingsForDate(date) {
-        const { data, error } = await supabase
+        const { data, error } = await db
             .from('bookings')
             .select('booking_date, booking_time, duration')
             .eq('booking_date', date);
@@ -93,7 +94,7 @@ const app = {
     },
 
     async loadAllBookingsForAdmin() {
-        const { data, error } = await supabase
+        const { data, error } = await db
             .from('bookings')
             .select('*')
             .order('booking_date', { ascending: true })
@@ -107,7 +108,7 @@ const app = {
     },
 
     async loadWaitlistForAdmin() {
-        const { data, error } = await supabase
+        const { data, error } = await db
             .from('waitlist')
             .select('*')
             .order('created_at', { ascending: true });
@@ -149,7 +150,7 @@ const app = {
         this.showLoading(true, 'Prüfe Daten...');
 
         // Doppelbuchungs-Prüfung in Supabase
-        const { data, error } = await supabase
+        const { data, error } = await db
             .from('bookings')
             .select('id')
             .eq('email', email)
@@ -352,7 +353,7 @@ const app = {
             internal_note: ''
         };
 
-        const { error } = await supabase.from('bookings').insert(bookingPayload);
+        const { error } = await db.from('bookings').insert(bookingPayload);
 
         if (error) {
             this.showLoading(false);
@@ -364,7 +365,7 @@ const app = {
         // E-Mail-Bestätigung via Edge Function senden (Fehler hier stoppen die Buchung nicht)
         try {
             this.showLoading(true, 'Bestätigungs-E-Mail wird gesendet...');
-            await supabase.functions.invoke('send-booking-email', {
+            await db.functions.invoke('send-booking-email', {
                 body: { booking: bookingPayload }
             });
         } catch (emailErr) {
@@ -383,7 +384,7 @@ const app = {
         const data = this.state.bookingData;
         this.showLoading(true, 'Wird gespeichert...');
 
-        const { error } = await supabase.from('waitlist').insert({
+        const { error } = await db.from('waitlist').insert({
             first_name: data.firstName,
             last_name: data.lastName,
             email: data.email,
@@ -578,7 +579,7 @@ const app = {
         const booking = (this.state.adminBookings || []).find(b => b.id === id);
         if (!booking) return;
 
-        const { error } = await supabase.from('bookings').update({
+        const { error } = await db.from('bookings').update({
             team: booking.team,
             word_received: booking.word_received,
             internal_note: booking.internal_note
