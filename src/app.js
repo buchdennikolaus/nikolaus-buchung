@@ -524,6 +524,11 @@ const app = {
         if (dateFilter && dateFilter !== 'all') {
             bookings = bookings.filter(b => b.booking_date === dateFilter);
         }
+        const teamFilter = document.getElementById('filter-team')?.value;
+        if (teamFilter !== undefined && teamFilter !== 'all') {
+            bookings = bookings.filter(b => (b.team || '') === teamFilter);
+        }
+
         const searchTerm = document.getElementById('search-field')?.value.toLowerCase();
         if (searchTerm) {
             bookings = bookings.filter(b =>

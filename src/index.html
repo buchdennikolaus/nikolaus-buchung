@@ -450,6 +450,16 @@
                         </select>
                     </div>
                     <div class="control-group">
+                        <label for="filter-team">Team filtern:</label>
+                        <select id="filter-team" onchange="app.filterBookings()">
+                            <option value="all">Alle Teams</option>
+                            <option value="">Kein Team</option>
+                            <option value="Team 1">Team 1</option>
+                            <option value="Team 2">Team 2</option>
+                            <option value="Team 3">Team 3</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
                         <label for="search-field">Suchen:</label>
                         <input type="text" id="search-field" placeholder="Name oder Adresse..." 
                                oninput="app.searchBookings()">
