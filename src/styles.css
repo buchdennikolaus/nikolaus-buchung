@@ -315,12 +315,14 @@ body {
 .date-card {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: var(--spacing-md);
     padding: var(--spacing-md);
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius);
     margin-bottom: var(--spacing-sm);
     background-color: white;
+    text-align: center;
 }
 
 .date-icon {
