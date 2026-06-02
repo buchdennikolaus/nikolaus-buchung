@@ -83,7 +83,7 @@ const app = {
     async loadBookingsForDate(date) {
         const { data, error } = await db
             .from('bookings')
-            .select('booking_date, booking_time, duration')
+            .select('booking_date, booking_time, duration, team')
             .eq('booking_date', date);
 
         if (error) {
@@ -201,13 +201,14 @@ const app = {
             checkTime.setMinutes(checkTime.getMinutes() + i * 20);
             const timeStr = `${checkTime.getHours().toString().padStart(2, '0')}:${checkTime.getMinutes().toString().padStart(2, '0')}`;
 
-            const conflict = bookings.some(b => {
+            const overlaps = bookings.filter(b => {
                 const bStart = new Date(`${date}T${b.booking_time}`);
                 const bEnd = new Date(bStart.getTime() + b.duration * 60000);
                 const slotStart = new Date(`${date}T${timeStr}`);
                 return slotStart >= bStart && slotStart < bEnd;
-            });
-            if (conflict) return true;
+            }).length;
+            // Slot erst voll wenn alle 3 Teams belegt sind
+            if (overlaps >= 3) return true;
         }
         return false;
     },
@@ -684,17 +685,19 @@ const app = {
     renderOverview() {
         const bookings = this.state.adminBookings || [];
         const slots = this.generateTimeSlots();
+        const TEAMS = 3;
 
-        // Statistik
         const dec5 = bookings.filter(b => b.booking_date === '2026-12-05');
         const dec6 = bookings.filter(b => b.booking_date === '2026-12-06');
         const totalChildren = bookings.reduce((s, b) => s + (b.num_children || 0), 0);
-        const totalSlots = slots.length * 2;
-        const bookedSlotCount = (b) => Math.ceil((b.duration || 20) / 20);
-        const usedDec5 = dec5.reduce((s, b) => s + bookedSlotCount(b), 0);
-        const usedDec6 = dec6.reduce((s, b) => s + bookedSlotCount(b), 0);
-        const freeDec5 = slots.length - usedDec5;
-        const freeDec6 = slots.length - usedDec6;
+
+        // Kapazität: Gesamte 20-Min-Einheiten × 3 Teams
+        const totalCapacity = slots.length * TEAMS;
+        const bookedUnits = (dayBookings) => dayBookings.reduce((s, b) => s + Math.ceil((b.duration || 20) / 20), 0);
+        const usedDec5 = bookedUnits(dec5);
+        const usedDec6 = bookedUnits(dec6);
+        const freeDec5 = totalCapacity - usedDec5;
+        const freeDec6 = totalCapacity - usedDec6;
 
         const statsEl = document.getElementById('overview-stats');
         statsEl.innerHTML = `
@@ -716,13 +719,64 @@ const app = {
             </div>
             <div class="stat-card stat-card-green">
                 <div class="stat-value">${freeDec5 + freeDec6}</div>
-                <div class="stat-label">Freie Slots gesamt</div>
+                <div class="stat-label">Freie Team-Slots</div>
             </div>
         `;
 
-        // Slots pro Tag rendern
         this.renderOverviewDay('2026-12-05', dec5, document.getElementById('overview-slots-dec5'));
         this.renderOverviewDay('2026-12-06', dec6, document.getElementById('overview-slots-dec6'));
+    },
+
+    /**
+     * Prüft ob ein Team zu einem bestimmten Zeitfenster bereits vergeben ist.
+     * @param {string} teamName - z.B. "Team 1"
+     * @param {string|number} excludeId - ID der aktuellen Buchung (wird ignoriert)
+     * @param {string} date - ISO-Datum
+     * @param {string} startTime - HH:MM
+     * @param {number} duration - Minuten
+     * @param {Array} allBookings - alle Buchungen des Tages
+     */
+    isTeamBusy(teamName, excludeId, date, startTime, duration, allBookings) {
+        if (!teamName || teamName === '-') return false;
+        const thisStart = new Date(`${date}T${startTime}`);
+        const thisEnd = new Date(thisStart.getTime() + duration * 60000);
+        return allBookings.some(b => {
+            if (b.id === excludeId) return false;
+            if (!b.team || b.team === '-' || b.team !== teamName) return false;
+            const bStart = new Date(`${date}T${b.booking_time}`);
+            const bEnd = new Date(bStart.getTime() + (b.duration || 20) * 60000);
+            return thisStart < bEnd && thisEnd > bStart;
+        });
+    },
+
+    /**
+     * Speichert Team-Zuweisung direkt aus der Übersichts-Ansicht (Auto-Save).
+     */
+    async saveTeamFromOverview(selectEl) {
+        const bookingId = selectEl.dataset.bookingId;
+        const newTeam = selectEl.value;
+        const indicator = document.getElementById(`save-ind-${bookingId}`);
+
+        const { error } = await db.from('bookings').update({ team: newTeam }).eq('id', bookingId);
+        if (error) {
+            selectEl.style.borderColor = 'var(--danger-red)';
+            console.error('Team speichern fehlgeschlagen:', error);
+            return;
+        }
+
+        // State aktualisieren
+        const booking = (this.state.adminBookings || []).find(b => b.id === bookingId);
+        if (booking) booking.team = newTeam;
+
+        // Erfolgs-Indikator kurz anzeigen
+        if (indicator) {
+            indicator.style.display = 'inline';
+            setTimeout(() => { indicator.style.display = 'none'; }, 1500);
+        }
+        selectEl.style.borderColor = '';
+
+        // Übersicht neu rendern damit Konflikt-Anzeigen aktualisiert werden
+        this.renderOverview();
     },
 
     renderOverviewDay(date, bookings, container) {
@@ -731,36 +785,91 @@ const app = {
         const slots = this.generateTimeSlots();
 
         slots.forEach(time => {
-            // Prüfen welche Buchung diesen Slot belegt
-            const booking = bookings.find(b => {
+            const slotTime = new Date(`${date}T${time}`);
+
+            // Alle Buchungen die diesen 20-Min-Block belegen
+            const overlapping = bookings.filter(b => {
                 const bStart = new Date(`${date}T${b.booking_time}`);
                 const bEnd = new Date(bStart.getTime() + (b.duration || 20) * 60000);
-                const slotTime = new Date(`${date}T${time}`);
                 return slotTime >= bStart && slotTime < bEnd;
             });
 
-            const card = document.createElement('div');
-            if (booking) {
-                // Ist dies der Start-Slot?
-                const isStart = booking.booking_time.substring(0, 5) === time;
-                const slotsCount = Math.ceil((booking.duration || 20) / 20);
-                card.className = 'overview-slot booked';
-                card.innerHTML = `
-                    <span class="slot-time-label">${time}</span>
-                    ${isStart ? `
-                        <span class="slot-booking-name">${booking.first_name} ${booking.last_name}</span>
-                        <span class="slot-booking-meta">${booking.num_children} Kind${booking.num_children !== 1 ? 'er' : ''} · ${booking.duration} min</span>
-                        ${booking.team ? `<span class="slot-booking-team">${booking.team}</span>` : ''}
-                    ` : `<span class="slot-booking-meta" style="opacity:0.5">↑ fortgesetzt</span>`}
-                `;
-            } else {
+            // Buchungen die GENAU hier starten
+            const starting = overlapping.filter(b => b.booking_time.substring(0, 5) === time);
+            // Buchungen die von früher fortgesetzt werden
+            const continuing = overlapping.filter(b => b.booking_time.substring(0, 5) !== time);
+            const freeTeams = 3 - overlapping.length;
+
+            if (overlapping.length === 0) {
+                // Komplett freier Slot
+                const card = document.createElement('div');
                 card.className = 'overview-slot free';
                 card.innerHTML = `
                     <span class="slot-time-label">${time}</span>
-                    <span class="slot-free-label">Frei</span>
+                    <span class="slot-free-label">Frei – alle 3 Teams verfügbar</span>
                 `;
+                container.appendChild(card);
+            } else {
+                // Startende Buchungen als vollständige Karten
+                starting.forEach(booking => {
+                    const card = document.createElement('div');
+                    card.className = 'overview-slot booked';
+
+                    // Team-Optionen mit Konflikt-Check
+                    const teamOptions = ['-', 'Team 1', 'Team 2', 'Team 3'].map(t => {
+                        if (t === '-') {
+                            const sel = (!booking.team || booking.team === '-') ? ' selected' : '';
+                            return `<option value="-"${sel}>–</option>`;
+                        }
+                        const busy = this.isTeamBusy(t, booking.id, date, booking.booking_time, booking.duration || 20, bookings);
+                        const selected = booking.team === t ? ' selected' : '';
+                        const disabled = busy ? ' disabled' : '';
+                        const label = busy ? `${t} ✗ belegt` : `${t} ✓`;
+                        return `<option value="${t}"${selected}${disabled}>${label}</option>`;
+                    }).join('');
+
+                    card.innerHTML = `
+                        <span class="slot-time-label">${time}</span>
+                        <div class="slot-booking-info">
+                            <span class="slot-booking-name">${booking.first_name} ${booking.last_name}</span>
+                            <span class="slot-booking-meta">${booking.num_children} Kind${booking.num_children !== 1 ? 'er' : ''} · ${booking.duration} min</span>
+                        </div>
+                        <div class="slot-team-wrapper">
+                            <select class="slot-team-select"
+                                    data-booking-id="${booking.id}"
+                                    onchange="app.saveTeamFromOverview(this)"
+                                    title="Team zuweisen">
+                                ${teamOptions}
+                            </select>
+                            <span class="slot-save-indicator" id="save-ind-${booking.id}">✓</span>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+
+                // Fortsetzungs-Slots kompakt
+                continuing.forEach(booking => {
+                    const card = document.createElement('div');
+                    card.className = 'overview-slot continuation';
+                    card.innerHTML = `
+                        <span class="slot-time-label">${time}</span>
+                        <span class="slot-booking-meta">↑ ${booking.first_name} ${booking.last_name}</span>
+                        ${booking.team && booking.team !== '-' ? `<span class="slot-booking-team">${booking.team}</span>` : ''}
+                    `;
+                    container.appendChild(card);
+                });
+
+                // Freie Team-Slots anzeigen (wenn < 3 belegt)
+                if (freeTeams > 0) {
+                    const freeCard = document.createElement('div');
+                    freeCard.className = 'overview-slot free-partial';
+                    freeCard.innerHTML = `
+                        <span class="slot-time-label">${time}</span>
+                        <span class="slot-free-label">${freeTeams} Team${freeTeams !== 1 ? 's' : ''} noch frei</span>
+                    `;
+                    container.appendChild(freeCard);
+                }
             }
-            container.appendChild(card);
         });
     },
 

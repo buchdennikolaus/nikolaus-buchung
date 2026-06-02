@@ -892,10 +892,24 @@ body {
     border-color: #bbf7d0;
 }
 
+.overview-slot.free-partial {
+    background: #f8fffe;
+    border-color: #d1fae5;
+    opacity: 0.85;
+}
+
 .overview-slot.booked {
     background: #fff5ee;
     border-color: #fed7aa;
     flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.overview-slot.continuation {
+    background: #fafafa;
+    border-color: #e5e7eb;
+    opacity: 0.75;
 }
 
 .slot-time-label {
@@ -911,15 +925,53 @@ body {
     font-size: 13px;
 }
 
+.slot-booking-info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+}
+
 .slot-booking-name {
     font-weight: 600;
     color: var(--dark-grey);
-    flex: 1;
 }
 
 .slot-booking-meta {
     color: var(--medium-grey);
     font-size: 12px;
+}
+
+.slot-team-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.slot-team-select {
+    padding: 4px 8px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-sm);
+    font-size: 13px;
+    font-family: var(--font-family);
+    color: var(--dark-grey);
+    cursor: pointer;
+    background: white;
+    min-width: 100px;
+}
+
+.slot-team-select:focus {
+    outline: none;
+    border-color: var(--primary-orange);
+    box-shadow: 0 0 0 2px rgba(240, 90, 0, 0.15);
+}
+
+.slot-save-indicator {
+    display: none;
+    color: var(--success-green);
+    font-weight: 700;
+    font-size: 14px;
 }
 
 .slot-booking-team {
