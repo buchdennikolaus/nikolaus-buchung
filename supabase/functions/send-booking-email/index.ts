@@ -73,6 +73,12 @@ Deno.serve(async (req: Request) => {
 <p style="margin:4px 0;font-size:14px;color:#444444;"><strong>Anzahl Kinder:</strong> ${booking.num_children}</p>
 </td></tr>
 </table>
+${booking.notes ? `<table width="100%" cellpadding="0" cellspacing="0" style="border-left:4px solid #cccccc;background-color:#f9f9f9;padding:16px 20px;margin-bottom:24px;">
+<tr><td>
+<h3 style="margin:0 0 8px 0;font-size:15px;color:#2c2c2c;">Ihre besonderen Hinweise</h3>
+<p style="margin:0;font-size:14px;color:#444444;">${booking.notes}</p>
+</td></tr>
+</table>` : ''}
 <table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #f05a00;background-color:#fff5ee;border-radius:4px;padding:20px;margin-bottom:24px;">
 <tr><td>
 <h3 style="margin:0 0 12px 0;font-size:15px;color:#f05a00;">Wichtig: Nikolaus-Formular</h3>
