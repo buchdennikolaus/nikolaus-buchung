@@ -118,7 +118,8 @@ Project_K/
 
 - Automatische Bestätigungs-E-Mail nach Buchung
 - Absender: buchdennikolaus@gmail.com
-- Inhalt: Termindetails, Download-Link für Formular, Hinweise
+- Inhalt: Termindetails, besondere Hinweise (falls angegeben), Download-Link für Formular, Hinweis zum digitalen Ausfüllen
+- Admin-Benachrichtigung bei jeder neuen Buchung (inkl. aller Buchungsdetails + Hinweise)
 - Technologie: Gmail SMTP via Supabase Edge Function (Deno)
 
 ---
@@ -234,5 +235,19 @@ git push
 ```
 
 ---
+
+## Änderungshistorie (aktuell)
+
+| Datum | Änderung |
+|---|---|
+| 2026-06-02 | 3-Team-Kapazität: Slot erst ausgebucht bei ≥3 gleichzeitigen Buchungen |
+| 2026-06-02 | Admin-Übersicht: read-only Slot-Ansicht mit Team-Badge |
+| 2026-06-02 | Admin-Buchungen: Team-Konflikt-Warnung bei Doppelbelegung (inline, rot) |
+| 2026-06-02 | Admin-Dashboard: Team-Filter in Buchungstabelle |
+| 2026-06-02 | Bestätigungs-E-Mail: besondere Hinweise werden angezeigt (wenn vorhanden) |
+| 2026-06-01 | Admin-Übersicht: Statistik-Kacheln + Slot-Grid mit Team-Dropdown (Auto-Save) |
+| 2026-06-01 | Logo auf Unterseiten vergrößert (56px) |
+| 2026-06-01 | Word-Formular-Hinweis: digitales Ausfüllen explizit verlangt |
+| 2026-06-01 | Admin-Container auf 1400px erweitert |
 
 *Zuletzt aktualisiert: 2026-06-02*
