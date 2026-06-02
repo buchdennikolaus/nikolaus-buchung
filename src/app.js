@@ -810,23 +810,14 @@ const app = {
                 `;
                 container.appendChild(card);
             } else {
-                // Startende Buchungen als vollständige Karten
+                // Startende Buchungen als vollständige Karten (read-only)
                 starting.forEach(booking => {
                     const card = document.createElement('div');
                     card.className = 'overview-slot booked';
 
-                    // Team-Optionen mit Konflikt-Check
-                    const teamOptions = ['-', 'Team 1', 'Team 2', 'Team 3'].map(t => {
-                        if (t === '-') {
-                            const sel = (!booking.team || booking.team === '-') ? ' selected' : '';
-                            return `<option value="-"${sel}>–</option>`;
-                        }
-                        const busy = this.isTeamBusy(t, booking.id, date, booking.booking_time, booking.duration || 20, bookings);
-                        const selected = booking.team === t ? ' selected' : '';
-                        const disabled = busy ? ' disabled' : '';
-                        const label = busy ? `${t} ✗ belegt` : `${t} ✓`;
-                        return `<option value="${t}"${selected}${disabled}>${label}</option>`;
-                    }).join('');
+                    const teamBadge = (booking.team && booking.team !== '-')
+                        ? `<span class="slot-booking-team">${booking.team}</span>`
+                        : `<span class="slot-no-team">kein Team</span>`;
 
                     card.innerHTML = `
                         <span class="slot-time-label">${time}</span>
@@ -834,15 +825,7 @@ const app = {
                             <span class="slot-booking-name">${booking.first_name} ${booking.last_name}</span>
                             <span class="slot-booking-meta">${booking.num_children} Kind${booking.num_children !== 1 ? 'er' : ''} · ${booking.duration} min</span>
                         </div>
-                        <div class="slot-team-wrapper">
-                            <select class="slot-team-select"
-                                    data-booking-id="${booking.id}"
-                                    onchange="app.saveTeamFromOverview(this)"
-                                    title="Team zuweisen">
-                                ${teamOptions}
-                            </select>
-                            <span class="slot-save-indicator" id="save-ind-${booking.id}">✓</span>
-                        </div>
+                        ${teamBadge}
                     `;
                     container.appendChild(card);
                 });

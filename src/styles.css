@@ -974,6 +974,16 @@ body {
     font-size: 14px;
 }
 
+.slot-no-team {
+    font-size: 11px;
+    color: var(--medium-grey);
+    font-style: italic;
+    padding: 2px 8px;
+    border: 1px dashed var(--border-color);
+    border-radius: 20px;
+    white-space: nowrap;
+}
+
 .slot-booking-team {
     background: var(--primary-orange);
     color: white;
