@@ -339,13 +339,13 @@ body {
 }
 
 .date-info strong {
-    font-size: 18px;
+    font-size: 24px;
     color: var(--dark-grey);
 }
 
 .date-info span {
     color: var(--medium-grey);
-    font-size: 15px;
+    font-size: 18px;
 }
 
 /* Forms */
