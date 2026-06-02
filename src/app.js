@@ -555,12 +555,14 @@ const app = {
                 <td>${b.duration} min</td>
                 <td>${b.num_children}</td>
                 <td>
-                    <select onchange="app.updateAdminField('${b.id}', 'team', this.value)">
+                    <select id="team-sel-${b.id}"
+                            onchange="app.updateAdminField('${b.id}', 'team', this.value); app.checkTeamConflictInTable('${b.id}', this)">
                         <option value="" ${!b.team ? 'selected' : ''}>-</option>
                         <option value="Team 1" ${b.team === 'Team 1' ? 'selected' : ''}>Team 1</option>
                         <option value="Team 2" ${b.team === 'Team 2' ? 'selected' : ''}>Team 2</option>
                         <option value="Team 3" ${b.team === 'Team 3' ? 'selected' : ''}>Team 3</option>
                     </select>
+                    <small id="team-warn-${b.id}" class="team-conflict-warn" style="display:none;"></small>
                 </td>
                 <td style="text-align:center;">
                     <input type="checkbox" ${b.word_received ? 'checked' : ''} 
@@ -669,6 +671,43 @@ const app = {
         const saveBtn = document.getElementById(`save-${id}`);
         if (saveBtn) saveBtn.style.display = 'none';
         this.showModal(`Änderungen für "${booking.first_name} ${booking.last_name}" gespeichert.`);
+    },
+
+    /**
+     * Prüft nach Teamwahl in der Buchungstabelle ob ein Konflikt besteht
+     * und zeigt eine Inline-Warnung unter dem Dropdown an.
+     */
+    checkTeamConflictInTable(id, selectEl) {
+        const warn = document.getElementById(`team-warn-${id}`);
+        if (!warn) return;
+        const booking = (this.state.adminBookings || []).find(b => b.id === id);
+        if (!booking) return;
+        const team = selectEl.value;
+        if (!team) {
+            warn.style.display = 'none';
+            selectEl.classList.remove('team-conflict');
+            return;
+        }
+        const allBookings = (this.state.adminBookings || []).filter(b => b.booking_date === booking.booking_date);
+        const busy = this.isTeamBusy(team, id, booking.booking_date, booking.booking_time, booking.duration || 20, allBookings);
+        if (busy) {
+            // Konflikt-Buchung für Info finden
+            const conflict = allBookings.find(b => {
+                if (b.id === id || b.team !== team) return false;
+                const bStart = new Date(`${booking.booking_date}T${b.booking_time}`);
+                const bEnd = new Date(bStart.getTime() + (b.duration || 20) * 60000);
+                const thisStart = new Date(`${booking.booking_date}T${booking.booking_time}`);
+                const thisEnd = new Date(thisStart.getTime() + (booking.duration || 20) * 60000);
+                return thisStart < bEnd && thisEnd > bStart;
+            });
+            const info = conflict ? ` (${conflict.first_name} ${conflict.last_name}, ${conflict.booking_time.substring(0,5)})` : '';
+            warn.textContent = `⚠️ ${team} bereits belegt${info}`;
+            warn.style.display = 'block';
+            selectEl.classList.add('team-conflict');
+        } else {
+            warn.style.display = 'none';
+            selectEl.classList.remove('team-conflict');
+        }
     },
 
     filterBookings() { this.renderAdminTable(); },
