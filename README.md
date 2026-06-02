@@ -79,9 +79,10 @@ Project_K/
 3. **Terminauswahl (Schritt 2)**
    - Anzeige verfügbarer Slots (20-Min-Intervalle, 17:00–20:00 Uhr)
    - Dauerbasierte Slot-Prüfung (1–3 Kinder = 20 min, 4–6 = 40 min, 7–9 = 60 min)
+   - **3-Team-Kapazität**: Ein Slot gilt erst als ausgebucht, wenn alle 3 Teams gleichzeitig belegt sind
    - Sonderregel 20:00 Uhr: Buchbar unabhängig von Dauer
    - Doppelbuchungs-Sperre per E-Mail-Adresse
-   - Warteliste wenn beide Tage ausgebucht
+   - Warteliste wenn beide Tage für alle 3 Teams ausgebucht
 
 4. **Bestätigungsseite (Schritt 3)**
    - Zusammenfassung aller Buchungsdetails
@@ -91,20 +92,26 @@ Project_K/
    - Bestätigungsmeldung
    - Terminübersicht
    - Download-Button für Nikolaus-Formular (.docx)
-   - Hinweis zur Rücksendung bis 01.12.2026
+   - Hinweis: Formular **digital am Computer** ausfüllen und als Datei per E-Mail senden (kein Ausdrucken/Scannen)
+   - Deadline: 01.12.2026
 
 ### Admin-Dashboard (`/#admin`)
 
 - **Login**: Gesichert mit Supabase Auth (E-Mail + Passwort)
-- **Buchungsübersicht**: Alle Buchungen in Echtzeit aus Supabase
-- **Filterung**: Nach Datum (5.12 / 6.12 / alle)
-- **Suche**: Volltextsuche nach Name und Adresse
-- **Datenverwaltung pro Zeile**:
-  - Team-Zuweisung (Team 1 / Team 2 / Team 3)
-  - Word-Eingang abhaken (Checkbox)
-  - Interne Notiz
-  - Speichern-Button pro Zeile
-- **Warteliste**: Separater Reiter mit allen Wartelisten-Einträgen
+- **Tab „Übersicht"** (Standard-Ansicht):
+  - Statistik-Kacheln: Buchungen gesamt, Kinder gesamt, Buchungen pro Tag, freie Team-Slots
+  - Slot-Ansicht: beide Tage (5. + 6. Dez) nebeneinander mit allen 20-Min-Zeitblöcken
+  - Gebuchte Slots: Name, Kinderanzahl, Dauer + **Team-Dropdown direkt in der Karte**
+  - Team-Dropdown mit **Konflikt-Anzeige**: belegte Teams werden grau + `✗ belegt` markiert
+  - **Auto-Save**: Team-Änderung wird sofort in Supabase gespeichert (kein separater Button)
+  - Fortsetzungs-Slots (z.B. 40-Min-Buchungen) als kompakte Karten dargestellt
+  - Freie Slots zeigen Anzahl noch verfügbarer Teams
+- **Tab „Buchungen"**: Tabellarische Vollansicht aller Buchungen
+  - Filterung nach Datum, Volltextsuche
+  - Team-Zuweisung, Word-Eingang, Interne Notizen pro Zeile
+  - Speichern-Button pro Zeile (für Notizen und Checkbox)
+  - Spaltenbreiten per Drag & Drop anpassbar
+- **Tab „Warteliste"**: Alle Wartelisten-Einträge
 - **Excel-Export**: Formatierter Download aller Buchungen als `.xlsx`
 
 ### E-Mail-System
@@ -228,4 +235,4 @@ git push
 
 ---
 
-*Zuletzt aktualisiert: 2026-06-01*
+*Zuletzt aktualisiert: 2026-06-02*
