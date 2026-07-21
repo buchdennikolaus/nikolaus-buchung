@@ -1,8 +1,10 @@
 # Konzept V2: Nikolaus Buchungssystem
 
-**Domain:** www.buchdennikolaus.de
+**Domain:** www.buchdennikolaus.de  
+**Status:** ✅ Vollständig implementiert und produktiv  
+**Letzte Aktualisierung:** 2026-07-21
 
-Dieses Dokument beschreibt die Weiterentwicklung des Nikolaus-Buchungssystems von einem reinen Prototyp zu einer produktionsreifen Anwendung unter Berücksichtigung des Feedbacks vom 30.04.2026.
+> Dieses Dokument beschreibt das implementierte Nikolaus-Buchungssystem. Es wurde ausgehend vom Planungsdokument (April 2026) fortlaufend ergänzt und spiegelt den aktuellen Funktionsumfang wider.
 
 ## 1. Architektur
 
@@ -20,16 +22,18 @@ Dieses Dokument beschreibt die Weiterentwicklung des Nikolaus-Buchungssystems vo
 
 ### 2.1. Buchungslogik & Slot-Anzeige
 
-1.  **Vereinfachte Slot-Anzeige:** Die Anzeige "begrenzt verfügbar" wird entfernt. Ein Termin-Slot ist entweder **"verfügbar"** (buchbar) oder **"ausgebucht"** (nicht buchbar).
+1.  **Vereinfachte Slot-Anzeige:** Ein Termin-Slot ist entweder **"verfügbar"** (buchbar) oder **"ausgebucht"** (nicht buchbar).
 
 2.  **Dauerabhängige Slot-Verfügbarkeit:**
     - Die Dauer des Besuchs wird basierend auf der Anzahl der Kinder berechnet (1-3: 20min, 4-6: 40min, 7-9: 60min).
     - Das System prüft, ob für die berechnete Dauer (z.B. 40 Min = 2 aufeinanderfolgende 20-Min-Slots) genügend zusammenhängende Zeit frei ist.
     - Ist ein für die Buchung notwendiger Folgetermin bereits belegt, wird der Starttermin als "ausgebucht" angezeigt.
 
-3.  **Sonderregel 20:00 Uhr:** Der letzte buchbare Starttermin ist immer **20:00 Uhr**. Dieser Termin kann unabhängig von der Kinderanzahl (bis max. 9) und der daraus resultierenden Dauer (bis 60 Min.) gebucht werden, sofern er noch frei ist. Die Buchung kann also bis 21:00 Uhr andauern.
+3.  **3-Team-Kapazität:** Ein Slot gilt erst als ausgebucht, wenn **alle 3 Teams** für diesen Zeitpunkt gleichzeitig belegt sind. Das ermöglicht bis zu 3 parallele Buchungen pro Slot.
 
-4.  **Buchungsschluss:** Buchungen sind nur **bis einschließlich 30.11.2026** möglich. Ab dem 01.12.2026 wird der Buchungs-Button deaktiviert und ein entsprechender Hinweis angezeigt.
+4.  **Sonderregel 20:00 Uhr:** Der letzte buchbare Starttermin ist immer **20:00 Uhr**. Dieser Termin kann unabhängig von der Kinderanzahl (bis max. 9) und der daraus resultierenden Dauer (bis 60 Min.) gebucht werden. Die Buchung kann also bis 21:00 Uhr andauern.
+
+5.  **Buchungsschluss:** Buchungen sind nur **bis einschließlich 30.11.2026** möglich. Ab dem 01.12.2026 wird der Buchungs-Button deaktiviert und ein entsprechender Hinweis angezeigt.
 
 ### 2.2. Benutzerführung & Formular
 
@@ -68,15 +72,31 @@ Dieses Dokument beschreibt die Weiterentwicklung des Nikolaus-Buchungssystems vo
 
 ## 3. Admin-Dashboard
 
-1.  **Erweiterte Tabellenansicht:** Die Hauptansicht der Buchungen wird um die Spalten **"E-Mail-Adresse"** und **"Telefonnummer"** ergänzt.
+**Login:** `www.buchdennikolaus.de/#admin` – gesichert mit Supabase Auth (E-Mail + Passwort).  
+**Login-Daten:** buchdennikolaus@gmail.com, Passwort über Supabase Dashboard verwaltbar (siehe DEPLOYMENT_GUIDE.md).
 
-2.  **Speichern-Button für Änderungen:** Wenn ein Admin Daten direkt in der Tabelle ändert (z.B. Notizen, Team-Zuweisung), wird die Zeile als "geändert" markiert und ein **"Speichern"-Button** erscheint für diese Zeile. Erst durch Klick auf diesen Button werden die Änderungen in die Datenbank geschrieben.
+### Tabs
 
-3.  **Wartelisten-Ansicht:**
-    - Das Admin-Dashboard erhält einen neuen Reiter oder eine separate Sektion namens **"Warteliste"**.
-    - Diese Ansicht zeigt alle Einträge aus der `waitlist`-Tabelle übersichtlich an (Name, Kontaktdaten, Kinderanzahl, gewünschtes Datum).
-    - **Zeitstempel:** Jeder Wartelisten-Eintrag enthält einen Zeitstempel, der anzeigt, wann sich die Person auf die Warteliste gesetzt hat (Format: TT.MM.JJJJ, HH:MM).
+1.  **Tab „Übersicht"** (Standard):
+    - Statistik-Kacheln: Buchungen gesamt, Kinder gesamt, Buchungen pro Tag, freie Team-Slots
+    - Slot-Ansicht: beide Tage (5. + 6. Dez) nebeneinander mit allen 20-Min-Zeitblöcken
+    - Gebuchte Slots: Name, Kinderanzahl, Dauer + **Team-Dropdown direkt in der Karte**
+    - Team-Dropdown mit **Konflikt-Anzeige**: belegte Teams werden grau + `✗ belegt` markiert
+    - **Auto-Save**: Team-Änderung wird sofort in Supabase gespeichert
 
-4.  **Download-Funktion:**
-    - Ein "Download (Excel)"-Button ermöglicht es Admins, die Buchungsdaten zu exportieren (in der finalen Version als Excel-Datei).
-    - Der Button ist in der Steuerleiste des Admin-Dashboards prominent platziert.
+2.  **Tab „Buchungen"**: Tabellarische Vollansicht aller Buchungen
+    - Filterung nach Datum, Team-Filter, Volltextsuche
+    - Team-Zuweisung, Word-Eingang, Interne Notizen pro Zeile
+    - **Team-Konflikt-Warnung**: Wenn zwei Buchungen im selben Slot dem gleichen Team zugewiesen sind, erscheint eine rote Warnung inline
+    - Speichern-Button pro Zeile (für Notizen und Checkbox)
+    - Spaltenbreiten per Drag & Drop anpassbar
+
+3.  **Tab „Warteliste"**: Alle Wartelisten-Einträge (Name, Kontakt, Kinderanzahl, gewünschtes Datum, Zeitstempel)
+
+4.  **Excel-Export**: Formatierter Download aller Buchungen als `.xlsx` via SheetJS
+
+## 4. E-Mail-System
+
+- **Bestätigungs-E-Mail** an Buchenden: Termindetails, besondere Hinweise (falls angegeben), Download-Link für Formular, Hinweis zum digitalen Ausfüllen
+- **Admin-Benachrichtigung** bei jeder neuen Buchung: alle Buchungsdetails inkl. Hinweise
+- Absender: buchdennikolaus@gmail.com (Gmail SMTP via Supabase Edge Function)

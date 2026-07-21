@@ -119,11 +119,19 @@ Wenn Sie das echte Word-Dokument haben:
 
 ## Admin-Zugang
 
-URL: `www.buchdennikolaus.de#admin`
+**URL:** `www.buchdennikolaus.de/#admin`  
+**Login:** buchdennikolaus@gmail.com  
+**Passwort:** Wird über **Supabase Auth** verwaltet – es ist **nicht** im Code gespeichert.
 
-> ⚠️ In der aktuellen Version ist das Admin-Dashboard öffentlich zugänglich.
-> Teilen Sie diese URL nur intern. Für einen echten Passwortschutz kann 
-> später eine einfache HTTP-Basic-Auth in Vercel eingerichtet werden.
+### Passwort vergessen / zurücksetzen
+
+1. Supabase Dashboard öffnen: https://supabase.com/dashboard/project/ggxvvzhtwmklkpeflopv/auth/users
+2. User `buchdennikolaus@gmail.com` in der Liste finden
+3. Auf die **drei Punkte (⋯)** rechts klicken
+4. **„Send password reset email"** wählen → Reset-Link kommt an buchdennikolaus@gmail.com
+5. Alternativ: direkt im Dashboard ein neues Passwort setzen über „Reset password"
+
+> 💡 Das Passwort ist ausschließlich in Supabase Auth gespeichert und kann von dort jederzeit geändert oder zurückgesetzt werden.
 
 ---
 
