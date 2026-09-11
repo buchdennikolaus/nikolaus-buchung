@@ -267,4 +267,30 @@
 
 ---
 
-*Zuletzt aktualisiert: 2026-06-01*
+---
+
+### 2026-09-11 – Automatische Team-Zuweisung beim Buchen
+
+**Aufgabe**: Teams werden beim Buchen automatisch zugewiesen (statt leer zu bleiben)  
+**Status**: ✅ Abgeschlossen
+
+**Durchgeführte Aktionen**:
+1. Neue Funktion `assignTeamForSlot(date, time)` in `src/app.js` eingefügt
+2. Funktion fragt beim Buchen die DB ab: Welche Teams sind für diesen Slot bereits belegt?
+3. Weist automatisch das erste freie Team zu: Team 1 → Team 2 → Team 3
+4. In `confirmBooking()`: `team: ''` ersetzt durch `team: assignedTeam` (Ergebnis der neuen Funktion)
+5. Manuelles Ändern im Admin weiterhin möglich (Dropdown bleibt unverändert)
+6. Konflikt-Warnung im Admin bleibt erhalten (keine Änderung nötig)
+
+**Logik**:
+- Slot 17:00 → keine Buchung → Team 1
+- Slot 17:00 → Team 1 belegt → Team 2
+- Slot 17:00 → Team 1 + 2 belegt → Team 3
+- Slot 17:00 → alle 3 belegt → Slot war bereits als ausgebucht angezeigt (nicht buchbar)
+
+**Geänderte Dateien**:
+- `src/app.js`: Neue Funktion `assignTeamForSlot()` + Aufruf in `confirmBooking()`
+
+---
+
+*Zuletzt aktualisiert: 2026-09-11*

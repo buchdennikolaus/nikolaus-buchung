@@ -80,6 +80,31 @@ const app = {
     // ==========================================
     // SUPABASE: Buchungen laden
     // ==========================================
+    // ==========================================
+    // AUTOMATISCHE TEAM-ZUWEISUNG
+    // ==========================================
+    async assignTeamForSlot(date, time) {
+        // Alle Buchungen für diesen exakten Slot laden
+        const { data, error } = await db
+            .from('bookings')
+            .select('team')
+            .eq('booking_date', date)
+            .eq('booking_time', time);
+
+        if (error) {
+            console.error('Fehler bei Team-Zuweisung:', error);
+            return 'Team 1'; // Fallback
+        }
+
+        // Bereits belegte Teams ermitteln
+        const usedTeams = (data || []).map(b => b.team).filter(t => t && t !== '');
+
+        // Erstes freies Team zurückgeben (Team 1 → Team 2 → Team 3)
+        const allTeams = ['Team 1', 'Team 2', 'Team 3'];
+        const freeTeam = allTeams.find(t => !usedTeams.includes(t));
+        return freeTeam || 'Team 1'; // Fallback (sollte nicht vorkommen, da Slot vorher als frei geprüft)
+    },
+
     async loadBookingsForDate(date) {
         const { data, error } = await db
             .from('bookings')
@@ -336,6 +361,9 @@ const app = {
         const data = this.state.bookingData;
         this.showLoading(true, 'Buchung wird gespeichert...');
 
+        // Automatische Team-Zuweisung: nächstes freies Team für diesen Slot ermitteln
+        const assignedTeam = await this.assignTeamForSlot(data.selectedDate, data.selectedTime);
+
         const bookingPayload = {
             first_name: data.firstName,
             last_name: data.lastName,
@@ -349,7 +377,7 @@ const app = {
             notes: data.notes,
             booking_date: data.selectedDate,
             booking_time: data.selectedTime,
-            team: '',
+            team: assignedTeam,
             word_received: false,
             internal_note: ''
         };
