@@ -2,7 +2,7 @@
 
 **Domain:** www.buchdennikolaus.de  
 **Status:** ✅ Vollständig implementiert und produktiv  
-**Letzte Aktualisierung:** 2026-07-21
+**Letzte Aktualisierung:** 2026-09-15
 
 > Dieses Dokument beschreibt das implementierte Nikolaus-Buchungssystem. Es wurde ausgehend vom Planungsdokument (April 2026) fortlaufend ergänzt und spiegelt den aktuellen Funktionsumfang wider.
 
@@ -46,6 +46,11 @@
 3.  **Validierung der Eingabefelder:**
     - `E-Mail`: Standard-HTML5-Validierung (`type="email"`) prüft auf ein gültiges Format (mit @-Zeichen).
     - `Telefonnummer`: Das Feld wird so konfiguriert, dass primär numerische Eingaben erwartet werden (`type="tel"`).
+
+4.  **Feste PLZ und Ort:** Die Felder „PLZ" und „Ort" sind **nicht editierbar** und fest vorausgefüllt:
+    - PLZ: `82223`
+    - Ort: `Eichenau`
+    - Die Felder sind als `readonly` markiert und grau hinterlegt. Eine manuelle Eingabe ist nicht möglich.
 
 ### 2.3. Wartelisten-Funktion
 
