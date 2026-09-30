@@ -82,7 +82,7 @@ ${booking.notes ? `<table width="100%" cellpadding="0" cellspacing="0" style="bo
 <table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #f05a00;background-color:#fff5ee;border-radius:4px;padding:20px;margin-bottom:24px;">
 <tr><td>
 <h3 style="margin:0 0 12px 0;font-size:15px;color:#f05a00;">Wichtig: Nikolaus-Formular</h3>
-<p style="margin:0 0 16px 0;font-size:14px;color:#444444;">Bitte laden Sie das Nikolaus-Formular herunter, f&#252;llen Sie es aus und senden Sie es <strong>bis sp&#228;testens 01.12.2026</strong> per E-Mail an: <a href="mailto:buchdennikolaus@gmail.com" style="color:#f05a00;">buchdennikolaus@gmail.com</a></p>
+<p style="margin:0 0 16px 0;font-size:14px;color:#444444;">Bitte laden Sie das Lob und Tadel-Formular herunter, f&#252;llen Sie eins pro Kind aus und senden Sie es <strong>bis sp&#228;testens 01.12.2026</strong> per E-Mail an: <a href="mailto:buchdennikolaus@gmail.com" style="color:#f05a00;">buchdennikolaus@gmail.com</a></p>
 <a href="${downloadUrl}" style="display:inline-block;background-color:#f05a00;color:#ffffff;padding:12px 24px;border-radius:4px;text-decoration:none;font-weight:bold;font-size:14px;">Formular herunterladen</a>
 </td></tr>
 </table>
