@@ -55,7 +55,7 @@ Project_K/
 | Auth | Supabase Auth | Admin-Login (E-Mail + Passwort) |
 | E-Mail | Gmail SMTP via Nodemailer | buchdennikolaus@gmail.com |
 | Excel-Export | SheetJS (xlsx) | Formatierter Download im Admin |
-| Domain | buchdennikolaus.de | Custom Domain auf Vercel |
+| Domain | buchdennikolaus.de | Registriert bei **Strato**, Custom Domain auf Vercel |
 | Repository | GitHub | buchdennikolaus/nikolaus-buchung |
 
 ---

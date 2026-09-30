@@ -84,25 +84,36 @@ const app = {
     // AUTOMATISCHE TEAM-ZUWEISUNG
     // ==========================================
     async assignTeamForSlot(date, time) {
-        // Alle Buchungen für diesen exakten Slot laden
+        // Alle Buchungen des Tages laden, um Überlappungen korrekt zu erkennen
         const { data, error } = await db
             .from('bookings')
-            .select('team')
-            .eq('booking_date', date)
-            .eq('booking_time', time);
+            .select('team, booking_time, duration')
+            .eq('booking_date', date);
 
         if (error) {
             console.error('Fehler bei Team-Zuweisung:', error);
             return 'Team 1'; // Fallback
         }
 
-        // Bereits belegte Teams ermitteln
-        const usedTeams = (data || []).map(b => b.team).filter(t => t && t !== '');
+        // Neue Buchungs-Zeitfenster bestimmen
+        // (duration noch nicht bekannt, aber wir brauchen nur die Startzeit-Überlappung)
+        const newStart = new Date(`${date}T${time}`);
+
+        // Teams ermitteln, die zum gewünschten Startzeitpunkt bereits belegt sind
+        const allTeams = ['Team 1', 'Team 2', 'Team 3'];
+        const usedTeams = (data || [])
+            .filter(b => {
+                if (!b.team || b.team === '') return false;
+                const bStart = new Date(`${date}T${b.booking_time}`);
+                const bEnd = new Date(bStart.getTime() + (b.duration || 20) * 60000);
+                // Das Team ist belegt, wenn newStart in [bStart, bEnd) liegt
+                return newStart >= bStart && newStart < bEnd;
+            })
+            .map(b => b.team);
 
         // Erstes freies Team zurückgeben (Team 1 → Team 2 → Team 3)
-        const allTeams = ['Team 1', 'Team 2', 'Team 3'];
         const freeTeam = allTeams.find(t => !usedTeams.includes(t));
-        return freeTeam || 'Team 1'; // Fallback (sollte nicht vorkommen, da Slot vorher als frei geprüft)
+        return freeTeam || 'Team 1'; // Fallback
     },
 
     async loadBookingsForDate(date) {
@@ -220,22 +231,25 @@ const app = {
     },
 
     isSlotBooked(bookings, date, time, duration) {
-        const requiredSlots = duration / 20;
-        for (let i = 0; i < requiredSlots; i++) {
-            const checkTime = new Date(`${date}T${time}`);
-            checkTime.setMinutes(checkTime.getMinutes() + i * 20);
-            const timeStr = `${checkTime.getHours().toString().padStart(2, '0')}:${checkTime.getMinutes().toString().padStart(2, '0')}`;
+        // Prüft ob der gewünschte Zeitblock (startzeit + duration) für ALLE 3 Teams belegt ist.
+        // Ein Team gilt als belegt, wenn es im gesamten Zeitblock eine überlappende Buchung hat.
+        const newStart = new Date(`${date}T${time}`);
+        const newEnd = new Date(newStart.getTime() + duration * 60000);
 
-            const overlaps = bookings.filter(b => {
+        const allTeams = ['Team 1', 'Team 2', 'Team 3'];
+        const busyTeams = allTeams.filter(team => {
+            // Ist dieses Team im gewünschten Zeitblock bereits belegt?
+            return bookings.some(b => {
+                if ((b.team || '') !== team) return false;
                 const bStart = new Date(`${date}T${b.booking_time}`);
-                const bEnd = new Date(bStart.getTime() + b.duration * 60000);
-                const slotStart = new Date(`${date}T${timeStr}`);
-                return slotStart >= bStart && slotStart < bEnd;
-            }).length;
-            // Slot erst voll wenn alle 3 Teams belegt sind
-            if (overlaps >= 3) return true;
-        }
-        return false;
+                const bEnd = new Date(bStart.getTime() + (b.duration || 20) * 60000);
+                // Überlappung: newStart < bEnd UND newEnd > bStart
+                return newStart < bEnd && newEnd > bStart;
+            });
+        });
+
+        // Slot ist voll, wenn alle 3 Teams belegt sind
+        return busyTeams.length >= 3;
     },
 
     hasAvailableSlotsOnDate(bookings, date, duration) {
@@ -589,7 +603,7 @@ const app = {
                 <td>${b.num_children}</td>
                 <td>
                     <select id="team-sel-${b.id}"
-                            onchange="app.updateAdminField('${b.id}', 'team', this.value); app.checkTeamConflictInTable('${b.id}', this)">
+                            onchange="app.updateAdminField('${b.id}', 'team', this.value); app.checkTeamConflictInTable('${b.id}', this); app.saveAdminRow('${b.id}', true)">
                         <option value="" ${!b.team ? 'selected' : ''}>-</option>
                         <option value="Team 1" ${b.team === 'Team 1' ? 'selected' : ''}>Team 1</option>
                         <option value="Team 2" ${b.team === 'Team 2' ? 'selected' : ''}>Team 2</option>
@@ -686,7 +700,7 @@ const app = {
         }
     },
 
-    async saveAdminRow(id) {
+    async saveAdminRow(id, silent = false) {
         const booking = (this.state.adminBookings || []).find(b => b.id === id);
         if (!booking) return;
 
@@ -703,7 +717,17 @@ const app = {
 
         const saveBtn = document.getElementById(`save-${id}`);
         if (saveBtn) saveBtn.style.display = 'none';
-        this.showModal(`Änderungen für "${booking.first_name} ${booking.last_name}" gespeichert.`);
+
+        if (!silent) {
+            this.showModal(`Änderungen für "${booking.first_name} ${booking.last_name}" gespeichert.`);
+        } else {
+            // Kurze visuelle Rückmeldung am Dropdown statt Modal
+            const sel = document.getElementById(`team-sel-${id}`);
+            if (sel) {
+                sel.style.outline = '2px solid var(--kolping-green, #4caf50)';
+                setTimeout(() => { sel.style.outline = ''; }, 1200);
+            }
+        }
     },
 
     /**

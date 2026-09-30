@@ -16,7 +16,7 @@
   - Authentifizierung: Gmail App-Passwort
   - Limit: 500 E-Mails pro Tag (ausreichend für das Projekt)
   - Integration über Supabase Edge Functions
-- **Domain:** www.buchdennikolaus.de (bereits registriert, wird mit Vercel verbunden)
+- **Domain:** www.buchdennikolaus.de – registriert bei **Strato** (Domain-Anbieter), DNS auf **Vercel** umgeleitet (Custom Domain)
 
 ## 2. Überarbeitete Features & Logik
 
