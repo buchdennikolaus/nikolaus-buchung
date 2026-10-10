@@ -29,29 +29,93 @@ const app = {
         // Supabase initialisieren
         db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // Buchungsschluss prüfen
-        const bookingDeadline = new Date('2026-12-01T00:00:00');
-        if (new Date() >= bookingDeadline) {
-            const bookingButton = document.querySelector('#screen-landing .btn-primary');
-            if (bookingButton) {
-                bookingButton.textContent = 'Buchungszeitraum beendet';
-                bookingButton.disabled = true;
-                bookingButton.style.backgroundColor = 'var(--medium-grey)';
-            }
-        }
+        // Datumsgrenzen
+        const bookingStart   = new Date('2026-11-01T00:00:00'); // Buchungen ab 01.11.2026
+        const bookingDeadline = new Date('2026-12-01T00:00:00'); // Buchungen bis 30.11.2026
+        const now = new Date();
 
-        // Admin-Zugang via URL-Hash (mit Auth-Check)
+        // Admin-Zugang immer zuerst prüfen (unabhängig vom Buchungszeitraum)
         if (window.location.hash === '#admin') {
             await this.checkAdminAuth();
+            return;
+        }
+
+        if (now < bookingStart) {
+            // VOR dem 01.11.: Countdown-Seite anzeigen
+            this.showScreen('coming-soon');
+            this.startCountdown(bookingStart);
+        } else {
+            // AB dem 01.11.: normale Landing Page
+            this.showScreen('landing');
+
+            // Buchungsschluss prüfen (ab 01.12.)
+            if (now >= bookingDeadline) {
+                const bookingButton = document.querySelector('#screen-landing .btn-primary');
+                if (bookingButton) {
+                    bookingButton.textContent = 'Buchungszeitraum beendet';
+                    bookingButton.disabled = true;
+                    bookingButton.style.backgroundColor = 'var(--medium-grey)';
+                }
+            }
         }
 
         window.addEventListener('hashchange', async () => {
             if (window.location.hash === '#admin') {
                 await this.checkAdminAuth();
             } else if (!window.location.hash) {
-                this.navigateTo('landing');
+                const n = new Date();
+                if (n < bookingStart) {
+                    this.showScreen('coming-soon');
+                } else {
+                    this.navigateTo('landing');
+                }
             }
         });
+    },
+
+    // Zeigt einen Screen direkt an (ohne navigateTo-Logik)
+    showScreen(screenName) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        const target = document.getElementById(`screen-${screenName}`);
+        if (target) target.classList.add('active');
+        this.state.currentScreen = screenName;
+        window.scrollTo(0, 0);
+    },
+
+    // ==========================================
+    // COUNTDOWN
+    // ==========================================
+    startCountdown(targetDate) {
+        const update = () => {
+            const now = new Date();
+            const diff = targetDate - now;
+
+            if (diff <= 0) {
+                // Zeit abgelaufen → automatisch auf Landing Page wechseln
+                clearInterval(this._countdownInterval);
+                this.showScreen('landing');
+                return;
+            }
+
+            const days    = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours   = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+            const pad = n => String(n).padStart(2, '0');
+            const dEl = document.getElementById('countdown-days');
+            const hEl = document.getElementById('countdown-hours');
+            const mEl = document.getElementById('countdown-minutes');
+            const sEl = document.getElementById('countdown-seconds');
+
+            if (dEl) dEl.textContent = pad(days);
+            if (hEl) hEl.textContent = pad(hours);
+            if (mEl) mEl.textContent = pad(minutes);
+            if (sEl) sEl.textContent = pad(seconds);
+        };
+
+        update(); // sofort einmal ausführen
+        this._countdownInterval = setInterval(update, 1000);
     },
 
     // ==========================================

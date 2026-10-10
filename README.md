@@ -67,7 +67,7 @@ Project_K/
 1. **Startseite**
    - Kolping-Logo und Branding
    - Veranstaltungsinformationen (5. + 6. Dezember 2026, 17–20 Uhr)
-   - Buchungsschluss-Hinweis (30.11.2026)
+   - Buchungszeitraum-Hinweis (01.11.2026 – 30.11.2026)
    - Kontakt-Footer
 
 2. **Formular (Schritt 1)**
@@ -199,7 +199,7 @@ GMAIL_APP_PASSWORD=<app-passwort>
 
 | Datum | Ereignis |
 |---|---|
-| ab sofort | Buchungen möglich |
+| 01.11.2026 | **Buchungsstart** (System schaltet automatisch frei) |
 | 30.11.2026 | **Buchungsschluss** (System deaktiviert Buchungen automatisch) |
 | 01.12.2026 | Deadline für Word-Formular-Rücksendung |
 | 05.12.2026 | Nikolaus-Besuch Tag 1 (17:00–20:00 Uhr) |

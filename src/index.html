@@ -7,8 +7,61 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <!-- Screen 0: Coming Soon / Countdown -->
+    <div id="screen-coming-soon" class="screen">
+        <div class="container">
+            <header class="header header-landing">
+                <img src="images/kolping-eichenau.jpg" alt="Kolpingsfamilie Eichenau" class="logo-large">
+                <h1>Nikolaus-Besuch buchen</h1>
+            </header>
+            <main class="content">
+                <div class="coming-soon-box">
+                    <div class="coming-soon-icon">🎅</div>
+                    <h2 class="coming-soon-title">Buchungen starten bald!</h2>
+                    <p class="coming-soon-subtitle">
+                        Ab dem <strong>1. November 2026</strong> können Sie hier einen Nikolaus-Besuch 
+                        für Ihre Familie buchen.
+                    </p>
+                    <div class="countdown-wrapper">
+                        <div class="countdown-block">
+                            <span class="countdown-number" id="countdown-days">--</span>
+                            <span class="countdown-label">Tage</span>
+                        </div>
+                        <div class="countdown-separator">:</div>
+                        <div class="countdown-block">
+                            <span class="countdown-number" id="countdown-hours">--</span>
+                            <span class="countdown-label">Stunden</span>
+                        </div>
+                        <div class="countdown-separator">:</div>
+                        <div class="countdown-block">
+                            <span class="countdown-number" id="countdown-minutes">--</span>
+                            <span class="countdown-label">Minuten</span>
+                        </div>
+                        <div class="countdown-separator">:</div>
+                        <div class="countdown-block">
+                            <span class="countdown-number" id="countdown-seconds">--</span>
+                            <span class="countdown-label">Sekunden</span>
+                        </div>
+                    </div>
+                    <div class="coming-soon-dates">
+                        <p>🗓️ Nikolaus-Besuche: <strong>5. & 6. Dezember 2026</strong>, 17:00–20:00 Uhr</p>
+                        <p>📅 Buchungszeitraum: <strong>1. November – 30. November 2026</strong></p>
+                    </div>
+                </div>
+            </main>
+            <footer class="footer">
+                <p>Bei Fragen können Sie uns gerne unter <a href="mailto:buchdennikolaus@gmail.com">buchdennikolaus@gmail.com</a> kontaktieren.</p>
+                <p style="margin-top: 8px;">
+                    <a href="#" onclick="app.navigateTo('impressum'); return false;">Impressum</a>
+                    &nbsp;·&nbsp;
+                    <a href="#" onclick="app.navigateTo('datenschutz'); return false;">Datenschutz</a>
+                </p>
+            </footer>
+        </div>
+    </div>
+
     <!-- Screen 1: Landing Page -->
-    <div id="screen-landing" class="screen active">
+    <div id="screen-landing" class="screen">
         <div class="container">
             <header class="header header-landing">
                 <img src="images/kolping-eichenau.jpg" alt="Kolpingsfamilie Eichenau" class="logo-large">
@@ -45,7 +98,7 @@
                 </button>
 
                 <div class="info-box info-box-light" style="margin-top: 2rem;">
-                    <p><strong>Wichtig:</strong> Buchungen sind nur bis zum <strong>30.11.2026</strong> möglich. Das ausgefüllte Lob und Tadel-Formular mit Informationen zu Ihren Kindern benötigen wir bis spätestens <strong>01.12.2026</strong> per E-Mail.</p>
+                    <p><strong>Wichtig:</strong> Buchungen sind vom <strong>01.11.2026</strong> bis zum <strong>30.11.2026</strong> möglich. Das ausgefüllte Lob und Tadel-Formular mit Informationen zu Ihren Kindern benötigen wir bis spätestens <strong>01.12.2026</strong> per E-Mail.</p>
                 </div>
             </main>
             <footer class="footer">

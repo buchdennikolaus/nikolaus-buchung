@@ -2,7 +2,7 @@
 
 **Domain:** www.buchdennikolaus.de  
 **Status:** ✅ Vollständig implementiert und produktiv  
-**Letzte Aktualisierung:** 2026-09-15
+**Letzte Aktualisierung:** 2026-09-30
 
 > Dieses Dokument beschreibt das implementierte Nikolaus-Buchungssystem. Es wurde ausgehend vom Planungsdokument (April 2026) fortlaufend ergänzt und spiegelt den aktuellen Funktionsumfang wider.
 
@@ -12,10 +12,12 @@
 - **Backend & Datenbank:** **Supabase** wird als "Backend-as-a-Service" genutzt. Es liefert die PostgreSQL-Datenbank, eine Auto-generierte API und ein Authentifizierungssystem.
 - **E-Mail-Versand:** **Gmail SMTP** wird für den E-Mail-Versand verwendet (buchdennikolaus@gmail.com). 
   - SMTP-Server: `smtp.gmail.com`
-  - Port: `587` (TLS)
-  - Authentifizierung: Gmail App-Passwort
+  - Port: `465` (SSL/TLS)
+  - Authentifizierung: Gmail App-Passwort (gespeichert als Supabase Secret `GMAIL_APP_PASSWORD`)
+  - Voraussetzung: **2-Faktor-Authentifizierung** muss am Google-Konto aktiv sein
   - Limit: 500 E-Mails pro Tag (ausreichend für das Projekt)
-  - Integration über Supabase Edge Functions
+  - Integration über Supabase Edge Functions (Deno)
+  - **Status: ✅ Getestet und funktionsfähig (Stand 30.09.2026)**
 - **Domain:** www.buchdennikolaus.de – registriert bei **Strato** (Domain-Anbieter), DNS auf **Vercel** umgeleitet (Custom Domain)
 
 ## 2. Überarbeitete Features & Logik
@@ -33,7 +35,7 @@
 
 4.  **Sonderregel 20:00 Uhr:** Der letzte buchbare Starttermin ist immer **20:00 Uhr**. Dieser Termin kann unabhängig von der Kinderanzahl (bis max. 9) und der daraus resultierenden Dauer (bis 60 Min.) gebucht werden. Die Buchung kann also bis 21:00 Uhr andauern.
 
-5.  **Buchungsschluss:** Buchungen sind nur **bis einschließlich 30.11.2026** möglich. Ab dem 01.12.2026 wird der Buchungs-Button deaktiviert und ein entsprechender Hinweis angezeigt.
+5.  **Buchungszeitraum:** Buchungen sind vom **01.11.2026** bis einschließlich **30.11.2026** möglich. Vor dem 01.11. wird eine Countdown-Sperrseite angezeigt, die automatisch auf die Buchungsseite wechselt. Ab dem 01.12.2026 wird der Buchungs-Button deaktiviert und ein entsprechender Hinweis angezeigt.
 
 ### 2.2. Benutzerführung & Formular
 
@@ -61,19 +63,20 @@
     - Bei Klick werden die bereits eingegebenen Kontaktdaten in eine separate `waitlist`-Tabelle in der Datenbank gespeichert.
     - Erfolgsmeldung für den Nutzer: *"Sie wurden erfolgreich auf die Warteliste gesetzt."*
 
-### 2.4. Word-Dokument Download
+### 2.4. Lob und Tadel-Formular Download
 
-1.  **Download nach Buchung:** Nach erfolgreicher Buchungsbestätigung wird ein **Download-Button** für das Word-Dokument angezeigt.
+1.  **Download nach Buchung:** Nach erfolgreicher Buchungsbestätigung wird ein **Download-Button** für das Formular angezeigt.
 2.  **Funktion:** 
     - Button: *"Nikolaus-Formular herunterladen"*
-    - Das Word-Dokument wird als .docx-Datei heruntergeladen
+    - Das Formular wird als `.docx`-Datei heruntergeladen (`nikolaus-formular.docx`)
     - Das Formular enthält Felder für Informationen über die Kinder (Name, Alter, Wünsche, etc.)
-3.  **Hinweis:** Der Nutzer wird darauf hingewiesen, das ausgefüllte Dokument bis spätestens 01.12.2026 per E-Mail zurückzusenden.
+    - **Wichtig:** Das Formular muss **eins pro Kind** ausgefüllt werden
+3.  **Hinweis:** Der Nutzer wird darauf hingewiesen, das Formular **digital** (nicht ausdrucken/scannen) auszufüllen und bis spätestens **01.12.2026** per E-Mail zurückzusenden.
 
 ### 2.5. Texte & Informationen
 
-1.  **Hinweis Word-Dokument:** Auf der Start- und/oder Erfolgsseite wird ein gut sichtbarer Hinweis platziert: *"Wichtig: Bitte senden Sie uns das ausgefüllte Word-Dokument mit Informationen zu Ihren Kindern bis spätestens 01.12.2026 per E-Mail an: buchdennikolaus@gmail.com"*
-2.  **Allgemeiner Kontakt:** Im Footer der Webseite wird ein genereller Kontakt-Hinweis hinzugefügt: *"Bei Fragen können Sie uns gerne unter folgender Email-Adresse kontaktieren: buchdennikolaus@gmail.com"*
+1.  **Hinweis Formular:** Auf der Start- und Erfolgsseite wird ein gut sichtbarer Hinweis platziert: *"Wichtig: Buchungen sind vom 01.11.2026 bis zum 30.11.2026 möglich. Das ausgefüllte Lob und Tadel-Formular mit Informationen zu Ihren Kindern benötigen wir bis spätestens 01.12.2026 per E-Mail."*
+2.  **Allgemeiner Kontakt:** Im Footer der Webseite: *"Bei Fragen können Sie uns gerne unter buchdennikolaus@gmail.com kontaktieren."*
 
 ## 3. Admin-Dashboard
 
