@@ -1016,10 +1016,43 @@ const app = {
         });
     },
 
+    // ==========================================
+    // FILTER / SUCHE (aufgerufen aus HTML onchange/oninput)
+    // ==========================================
+    filterBookings() {
+        this.renderAdminTable();
+    },
+
+    searchBookings() {
+        this.renderAdminTable();
+    },
+
+    // Gibt die aktuell gefilterten Buchungen zurück (für Download)
+    getFilteredBookings() {
+        let bookings = this.state.adminBookings || [];
+
+        const dateFilter = document.getElementById('filter-date')?.value;
+        if (dateFilter && dateFilter !== 'all') {
+            bookings = bookings.filter(b => b.booking_date === dateFilter);
+        }
+        const teamFilter = document.getElementById('filter-team')?.value;
+        if (teamFilter !== undefined && teamFilter !== 'all') {
+            bookings = bookings.filter(b => (b.team || '') === teamFilter);
+        }
+        const searchTerm = document.getElementById('search-field')?.value.toLowerCase();
+        if (searchTerm) {
+            bookings = bookings.filter(b =>
+                `${b.first_name} ${b.last_name}`.toLowerCase().includes(searchTerm) ||
+                (b.address || '').toLowerCase().includes(searchTerm)
+            );
+        }
+        return bookings;
+    },
+
     async downloadExcel() {
-        // Immer alle Buchungen frisch laden
+        // Gefilterte Buchungen aus dem aktuellen State verwenden
         this.showLoading(true, 'Excel wird erstellt...');
-        const bookings = await this.loadAllBookingsForAdmin();
+        const bookings = this.getFilteredBookings();
         this.showLoading(false);
 
         if (!bookings.length) {
