@@ -1272,6 +1272,99 @@ select.team-conflict {
     }
 }
 
+/* ==========================================
+   ADMIN DASHBOARD – Tabs & Views
+   ========================================== */
+
+/* Filter-Leiste */
+.admin-controls {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    margin-bottom: 20px;
+    padding: 16px;
+    background: var(--bg-light);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+}
+
+.control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    min-width: 160px;
+}
+
+.control-group-button {
+    flex: 0 0 auto;
+}
+
+.control-group label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--medium-grey);
+}
+
+.control-group select,
+.control-group input[type="text"] {
+    padding: 8px 12px;
+    border: 1.5px solid var(--border-color);
+    border-radius: var(--border-radius-sm);
+    font-size: 14px;
+    font-family: var(--font-family);
+    background: white;
+    color: var(--dark-grey);
+}
+
+.control-group select:focus,
+.control-group input[type="text"]:focus {
+    outline: none;
+    border-color: var(--primary-orange);
+}
+
+/* Tabs */
+.admin-tabs {
+    display: flex;
+    gap: 4px;
+    border-bottom: 2px solid var(--border-color);
+    margin-bottom: 20px;
+}
+
+.tab-btn {
+    padding: 10px 20px;
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--medium-grey);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: var(--transition);
+    font-family: var(--font-family);
+}
+
+.tab-btn:hover {
+    color: var(--primary-orange);
+}
+
+.tab-btn.active {
+    color: var(--primary-orange);
+    border-bottom-color: var(--primary-orange);
+}
+
+/* Views – standardmäßig versteckt, nur .active sichtbar */
+.admin-view {
+    display: none;
+}
+
+.admin-view.active {
+    display: block;
+}
+
 /* Custom Modal */
 .modal-overlay {
     position: fixed;
