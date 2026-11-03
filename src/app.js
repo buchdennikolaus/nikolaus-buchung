@@ -1017,6 +1017,24 @@ const app = {
     },
 
     // ==========================================
+    // ADMIN TABS
+    // ==========================================
+    showAdminView(view) {
+        // Alle Views ausblenden
+        document.querySelectorAll('.admin-view').forEach(v => v.classList.remove('active'));
+        // Alle Tab-Buttons deaktivieren
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+
+        // Gewünschten View einblenden
+        const viewEl = document.getElementById(`admin-view-${view}`);
+        if (viewEl) viewEl.classList.add('active');
+
+        // Zugehörigen Tab-Button aktivieren
+        const tabBtn = document.getElementById(`tab-${view}`);
+        if (tabBtn) tabBtn.classList.add('active');
+    },
+
+    // ==========================================
     // FILTER / SUCHE (aufgerufen aus HTML onchange/oninput)
     // ==========================================
     filterBookings() {
