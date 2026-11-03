@@ -1356,14 +1356,7 @@ select.team-conflict {
     border-bottom-color: var(--primary-orange);
 }
 
-/* Views – standardmäßig versteckt, nur .active sichtbar */
-.admin-view {
-    display: none;
-}
-
-.admin-view.active {
-    display: block;
-}
+/* Views – per JavaScript gesteuert via inline style */
 
 /* Custom Modal */
 .modal-overlay {
