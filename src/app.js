@@ -832,14 +832,22 @@ const app = {
         }
     },
 
-    filterBookings() { this.renderAdminTable(); },
-    searchBookings() { this.renderAdminTable(); },
+    filterBookings() {
+        this.showAdminView('bookings');
+        this.renderAdminTable();
+    },
+    searchBookings() {
+        this.showAdminView('bookings');
+        this.renderAdminTable();
+    },
 
     showAdminView(viewName) {
-        document.querySelectorAll('.admin-view').forEach(v => v.classList.remove('active'));
-        document.getElementById(`admin-view-${viewName}`).classList.add('active');
+        document.querySelectorAll('.admin-view').forEach(v => v.style.display = 'none');
+        const viewEl = document.getElementById(`admin-view-${viewName}`);
+        if (viewEl) viewEl.style.display = 'block';
         document.querySelectorAll('.admin-tabs .tab-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById(`tab-${viewName}`).classList.add('active');
+        const tabEl = document.getElementById(`tab-${viewName}`);
+        if (tabEl) tabEl.classList.add('active');
         if (viewName === 'overview') this.renderOverview();
     },
 
