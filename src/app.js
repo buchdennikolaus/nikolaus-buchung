@@ -135,6 +135,7 @@ const app = {
             } else if (screenName === 'success') {
                 this.populateSuccess();
             } else if (screenName === 'admin') {
+                this.showAdminView('overview');
                 this.loadAdminData();
             }
             window.scrollTo(0, 0);
